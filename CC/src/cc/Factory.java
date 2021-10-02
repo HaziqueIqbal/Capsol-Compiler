@@ -1,6 +1,8 @@
 package cc;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  *
@@ -10,7 +12,16 @@ public class Factory {
 
     public String ClassName;
     public ArrayList<String> KeyWords = new ArrayList<>();
-    ArrayList<Factory> oFactories = new ArrayList<>();
+    public static ArrayList<Factory> oFactories = new ArrayList<>();
+    private Matcher match;
+    private Pattern identifier;
+    private Pattern FloatingPointNumber;
+    private Pattern character;
+    private Pattern String;
+    private Pattern unSignedInteger;
+    private Pattern signedInteger; 
+    private Pattern hexNumber;
+    private Pattern address;
 
     public void Initialize() {
         Factory oFactory = new Factory();
@@ -43,14 +54,7 @@ public class Factory {
         oFactories.add(oFactory);
 
         oFactory = new Factory();
-        oFactory.ClassName = "UnSignedFloatingPoint";
-        KeyWords = new ArrayList<>();
-        KeyWords.add("upoint");
-        oFactory.KeyWords = KeyWords;
-        oFactories.add(oFactory);
-
-        oFactory = new Factory();
-        oFactory.ClassName = "SignedFloatingPoint";
+        oFactory.ClassName = "FloatingPointNumber";
         KeyWords = new ArrayList<>();
         KeyWords.add("point");
         oFactory.KeyWords = KeyWords;
@@ -312,15 +316,67 @@ public class Factory {
         KeyWords.add("indexed");
         oFactory.KeyWords = KeyWords;
         oFactories.add(oFactory);
-        int i = 1;
-        for (Factory oFactory2 : oFactories) {
-            System.out.println(oFactory2.ClassName);
 
-            oFactory2.KeyWords.forEach((KeyWord) -> {
-                System.out.println(KeyWord);
-            });
-            System.out.println("===============================" + i);
-            i++;
-        }
+//        int i = 1;
+//        for (Factory oFactory2 : oFactories) {
+//            System.out.println(oFactory2.ClassName);
+//
+//            oFactory2.KeyWords.forEach((KeyWord) -> {
+//                System.out.println(KeyWord);
+//            });
+//            System.out.println("===============================" + i);
+//            i++;
+//        }
+//        -----REGIX-----
+//        Regix for Identifier
+        identifier = Pattern.compile("([A-Za-z](_|\\$)?|_|\\$)([A-Za-z0-9]+(_|\\$)?)*");
+//        Regix for FloatingPointNumber
+        FloatingPointNumber = Pattern.compile("[+-]?[0-9]*.[0-9][0-9]*([Ee]([+-]?[0-9]*))?");
+//        Regix for Address
+        address = Pattern.compile("0x([a-fA-F0-9]{40})");
+//        Regix for HexNumber
+        hexNumber = Pattern.compile("([a-fA-F0-9]{40})");
+//        Regix for SignedInteger
+        signedInteger = Pattern.compile("[+-][0-9][0-9]*");
+//        Regix for UnSignedInteger
+        unSignedInteger = Pattern.compile("[0-9][0-9]*");
+//        Regix for Character
+        character = Pattern.compile("\'(\\\\[fbnrt0\\\\]|'|\"|/|[A-Za-z0-9])?\'");
+//        Regix for String
+        String = Pattern.compile("\"((\\\\[\'\"\\\\])|(\\\\[bfnrt0])|([\\!#-&\\(-/0-9:-@A-Z\\[\\]-`ac-eg-mo-qsu-z\\{-~])|([bnfrt0])|(\\s))*\"");
+
+    }
+
+    public boolean isIdentifier(String word) {
+        match = identifier.matcher(word);
+        return match.matches();
+    }
+    public boolean isFloatingPointNumber(String word) {
+        match = FloatingPointNumber.matcher(word);
+        return match.matches();
+    }
+    public boolean isAddress(String word) {
+        match = address.matcher(word);
+        return match.matches();
+    }
+    public boolean isHexNumber(String word) {
+        match = hexNumber.matcher(word);
+        return match.matches();
+    }
+    public boolean isSignedInteger(String word) {
+        match = signedInteger.matcher(word);
+        return match.matches();
+    }
+    public boolean isUnsignedInteger(String word) {
+        match = unSignedInteger.matcher(word);
+        return match.matches();
+    }
+    public boolean isCharacter(String word) {
+        match = character.matcher(word);
+        return match.matches();
+    }
+    public boolean isString(String word) {
+        match = String.matcher(word);
+        return match.matches();
     }
 }
