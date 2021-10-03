@@ -11,7 +11,9 @@ import java.util.regex.Matcher;
 public class Factory {
 
     public String ClassName;
-    public ArrayList<String> KeyWords = new ArrayList<>();
+    public static ArrayList<String> KeyWords = new ArrayList<>();
+    public static ArrayList<String> Punctuators = new ArrayList<>();
+    public static ArrayList<String> Operators = new ArrayList<>();
     public static ArrayList<Factory> oFactories = new ArrayList<>();
     private Matcher match;
     private Pattern identifier;
@@ -317,6 +319,48 @@ public class Factory {
         oFactory.KeyWords = KeyWords;
         oFactories.add(oFactory);
 
+//        Punctuators
+        Punctuators.add("{");
+        Punctuators.add("}");
+        Punctuators.add("(");
+        Punctuators.add(")");
+        Punctuators.add("[");
+        Punctuators.add("]");
+        Punctuators.add(":");
+        Punctuators.add(";");
+        Punctuators.add(",");
+        Punctuators.add(".");
+        Punctuators.add("=>");
+        Punctuators.add("?");
+        
+
+//        Operators
+
+        Operators.add("+");
+        Operators.add("-");
+        Operators.add("*");
+        Operators.add("/");
+        Operators.add("%");
+        Operators.add("<");
+        Operators.add(">");
+        Operators.add("<=");
+        Operators.add(">=");
+        Operators.add("!=");
+        Operators.add("==");
+        Operators.add("=");
+        Operators.add("+=");
+        Operators.add("-=");
+        Operators.add("*=");
+        Operators.add("/=");
+        Operators.add("%=");
+        Operators.add("--");
+        Operators.add("++");
+        Operators.add("**");
+        Operators.add("&&");
+        Operators.add("||");
+        Operators.add("!");
+        
+        
 //        int i = 1;
 //        for (Factory oFactory2 : oFactories) {
 //            System.out.println(oFactory2.ClassName);
