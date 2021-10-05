@@ -1,3 +1,5 @@
+7u
++abc-xabx +5
 int x;
 x = 100;
 x = x + 12;
@@ -6,7 +8,6 @@ c + +f++
 i += 3
 -21.3
 -345.2
-+abc-xabx + 5
 ._ce9.544f.d
 99.77.a
 55.4
@@ -25,3 +26,19 @@ Char c='\\n'+'n'+r'\r'+'\
 .a4
 /44.8
 a=>b
+0x5B38Da6a701c568545dCfcB03FcB875f56beddC4.0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
+0x5B38Da6a701c568545dCfcB03FcB875f56beddC4^e
+int status = 5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+address adr = 0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB;
+contract checkcompiler{ 
+int i = 0;
+address adr = 0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB;
+function host() public{
+do{
+i++;
+}while(i<=5);
+}
+function read() public view returns(int){
+return i;
+}
+}

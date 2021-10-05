@@ -51,66 +51,7 @@ public class LexicalAnalyzer {
                 currentAndNextChar += line.charAt(i);
             }
             if ((Character.isAlphabetic(charAt) || charAt == '_' || charAt == '$')) {
-                if (temp.contains("+") || temp.contains("-")) {
-                    words.add(temp);
-                    temp = "";
-                    temp += charAt;
-                } else {
-                    temp += charAt;
-                }
-            } else if (i != line.length() - 1 & (charAt == '+' || charAt == '-') || Operators.contains(currentAndNextChar)) {
-                if (Character.isDigit(line.charAt(i + 1))) {
-                    if (i == 0) {
-                        temp += charAt;
-                    } else if (Character.isAlphabetic(line.charAt(i - 1))) {
-                        words.add(temp);
-                        temp = "";
-                        temp += charAt;
-                    } else if (Character.isDigit(line.charAt(i - 1)) & Character.isDigit(line.charAt(i + 1))) {
-                        words.add(temp);
-                        temp = "";
-                        temp += charAt;
-                        words.add(temp);
-                        temp="";
-                    } else {
-                        temp += charAt;
-                    }
-                    IsSignStarted = true;
-                } else if (Operators.contains(currentAndNextChar)) {
-                    if (!temp.isEmpty()) {
-                        words.add(temp);
-                        temp = "";
-                        temp += currentAndNextChar;
-                        words.add(temp);
-                        temp = "";
-                        i++;
-                    } else if (temp.isEmpty()) {
-                        temp += currentAndNextChar;
-                        words.add(temp);
-                        temp = "";
-                        i++;
-                    } else {
-                        temp += charAt;
-                    }
-
-                } else if (temp.isEmpty()) {
-                    temp += charAt;
-                    words.add(temp);
-                    temp = "";
-                } else {
-                    words.add(temp);
-                    temp = "";
-                    temp += charAt;
-                }
-
-            } else if (IsSignStarted & Character.isDigit(charAt)) {
                 temp += charAt;
-
-            } else if (IsSignStarted & !Character.isDigit(charAt)) {
-                words.add(temp);
-                temp = "";
-                temp += charAt;
-                IsSignStarted = false;
             } else if (Character.isDigit(charAt)) {
                 temp += charAt;
             } else if (charAt == '.') { // check for dot and then check all conditions
@@ -167,21 +108,13 @@ public class LexicalAnalyzer {
                         temp += charAt;
                     }
                 }
-//            } else if (charAt == '0' & !IsAddressStarted & i != line.length() - 1) {
-//                if (!"".equals(temp)) {
-//                    words.add(temp);
-//                    temp = "";
-//                }
-//                IsAddressStarted = true;
-//                temp += charAt;
-//            } else if (IsAddressStarted & charAt == 'x' & line.charAt(i - 1) == '0') {
-//                temp += charAt;
-//            } else if (temp.contains("0x") & temp.length() <= 42) {
-//                temp += charAt;
-//                if(Factory.isAddress(temp)){
-//                    words.add(temp);
-//                    temp = "";
-//                }
+            } else if (currentAndNextChar.equals("0x") & !IsCharStarted & !IsStringStarted) {
+                int j = 0;
+                temp += currentAndNextChar;
+                for (int k = i + 2; k < i + 41; k++) {
+                    temp += charAt;
+                }
+                i = j;
             } else if (charAt == '"' & !IsStringStarted & !IsCharStarted) {
                 if (!"".equals(temp)) {
                     words.add(temp);
