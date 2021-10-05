@@ -1,3 +1,12 @@
+int x;
+x = 100;
+x = x + 12;
+33.13+3
+c + +f++
+i += 3
+-21.3
+-345.2
++abc-xabx + 5
 ._ce9.544f.d
 99.77.a
 55.4
@@ -13,3 +22,6 @@ str="abc+=\\+abc-xabx+5
 str="abc+=\"+abc-xabx+5
 9.avb8x.44
 Char c='\\n'+'n'+r'\r'+'\
+.a4
+/44.8
+a=>b

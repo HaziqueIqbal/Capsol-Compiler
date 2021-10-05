@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
  * @author Hazique
  */
 public class Factory {
-    
+
     public String ClassName;
     public static ArrayList<String> KeyWords = new ArrayList<>();
     public static ArrayList<String> Punctuators = new ArrayList<>();
@@ -18,14 +18,14 @@ public class Factory {
     private static Matcher match;
     private static Pattern identifier;
     private static Pattern FloatingPointNumber;
-    private Pattern character;
-    private Pattern String;
+    private static Pattern character;
+    private static Pattern String;
     private static Pattern unSignedInteger;
-    private Pattern signedInteger; 
-    private Pattern hexNumber;
-    private Pattern address;
+    private static Pattern signedInteger;
+    private static Pattern address;
 
     public void Initialize() {
+        //KeyWords
         Factory oFactory = new Factory();
         oFactory.ClassName = "Address";
         ArrayList<String> KeyWords = new ArrayList<>();
@@ -332,10 +332,8 @@ public class Factory {
         Punctuators.add(".");
         Punctuators.add("=>");
         Punctuators.add("?");
-        
 
 //        Operators
-
         Operators.add("+");
         Operators.add("-");
         Operators.add("*");
@@ -358,24 +356,14 @@ public class Factory {
         Operators.add("**");
         Operators.add("&&");
         Operators.add("||");
+        //Bitwise
         Operators.add("!");
         Operators.add("<<");
         Operators.add("~");
         Operators.add("&");
         Operators.add("^");
         Operators.add("|");
-        
-        
-//        int i = 1;
-//        for (Factory oFactory2 : oFactories) {
-//            System.out.println(oFactory2.ClassName);
-//
-//            oFactory2.KeyWords.forEach((KeyWord) -> {
-//                System.out.println(KeyWord);
-//            });
-//            System.out.println("===============================" + i);
-//            i++;
-//        }
+
 //        -----REGIX-----
 //        Regix for Identifier
         identifier = Pattern.compile("([A-Za-z](_|\\$)?|_|\\$)([A-Za-z0-9]+(_|\\$)?)*");
@@ -397,31 +385,33 @@ public class Factory {
         match = identifier.matcher(word);
         return match.matches();
     }
+
     public static boolean isFloatingPointNumber(String word) {
         match = FloatingPointNumber.matcher(word);
         return match.matches();
     }
-    public boolean isAddress(String word) {
+
+    public static boolean isAddress(String word) {
         match = address.matcher(word);
         return match.matches();
     }
-    public boolean isHexNumber(String word) {
-        match = hexNumber.matcher(word);
-        return match.matches();
-    }
-    public boolean isSignedInteger(String word) {
+
+    public static boolean isSignedInteger(String word) {
         match = signedInteger.matcher(word);
         return match.matches();
     }
+
     public static boolean isUnsignedInteger(String word) {
         match = unSignedInteger.matcher(word);
         return match.matches();
     }
-    public boolean isCharacter(String word) {
+
+    public static boolean isCharacter(String word) {
         match = character.matcher(word);
         return match.matches();
     }
-    public boolean isString(String word) {
+
+    public static boolean isString(String word) {
         match = String.matcher(word);
         return match.matches();
     }
