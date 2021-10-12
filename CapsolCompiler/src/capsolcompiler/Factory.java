@@ -1,8 +1,8 @@
-package cc;
+package capsolcompiler;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -15,9 +15,11 @@ public class Factory {
     public static ArrayList<String> Punctuators = new ArrayList<>();
     public static ArrayList<String> Operators = new ArrayList<>();
     public static ArrayList<Factory> oFactories = new ArrayList<>();
+    public static ArrayList<Character> EscapeCharacters = new ArrayList<>();
     private static Matcher match;
     private static Pattern identifier;
-    private static Pattern FloatingPointNumber;
+    private static Pattern SignedFloatingPointNumber;
+    private static Pattern UnSignedFloatingPointNumber;
     private static Pattern character;
     private static Pattern String;
     private static Pattern unSignedInteger;
@@ -332,7 +334,6 @@ public class Factory {
         Punctuators.add(".");
         Punctuators.add("=>");
         Punctuators.add("?");
-
 //        Operators
         Operators.add("+");
         Operators.add("-");
@@ -363,12 +364,20 @@ public class Factory {
         Operators.add("&");
         Operators.add("^");
         Operators.add("|");
+        //Escape Characters
+        EscapeCharacters.add('r');
+        EscapeCharacters.add('n');
+        EscapeCharacters.add('a');
+        EscapeCharacters.add('t');
+        EscapeCharacters.add('b');
 
 //        -----REGIX-----
 //        Regix for Identifier
         identifier = Pattern.compile("([A-Za-z](_|\\$)?|_|\\$)([A-Za-z0-9]+(_|\\$)?)*");
 //        Regix for FloatingPointNumber
-        FloatingPointNumber = Pattern.compile("[+-]?\\d*\\.\\d*([Ee]([+-]?\\d+))?");
+        SignedFloatingPointNumber = Pattern.compile("[+-]\\d*\\.\\d*");
+        // Regix for UnFloatingPointNumber
+        UnSignedFloatingPointNumber = Pattern.compile("\\d*\\.\\d*");
 //        Regix for Address
         address = Pattern.compile("0x([a-fA-F0-9]{40})");
 //        Regix for SignedInteger
@@ -386,8 +395,13 @@ public class Factory {
         return match.matches();
     }
 
-    public static boolean isFloatingPointNumber(String word) {
-        match = FloatingPointNumber.matcher(word);
+    public static boolean isSignedFloatingPointNumber(String word) {
+        match = SignedFloatingPointNumber.matcher(word);
+        return match.matches();
+    }
+
+    public static boolean isUnSignedFloatingPointNumber(String word) {
+        match = UnSignedFloatingPointNumber.matcher(word);
         return match.matches();
     }
 

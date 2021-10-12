@@ -1,0 +1,84 @@
+c = 3 + -2
+33.13+3
++abc-xabx+5
+++a;        
+a++;          
+--a;        
+a--;          
+-abs
+c = 3 + 2
+c = a + -i
+c = a + --i
+-+
+97.56.5abc.adgds.536
+`*sfsfg
+gsgwgewt
+ewtew
+afsgfa*`
+safa
+99.56.8
+str="abc+=\\+abc-xabx+5\"dd"
+Char c='\\n'+'n'+r'\r'+'\
+..500_ab85
+$$Single line comment
+$ja7_3
+a//.b.c+++==97.56.5abc
+0x5B38Da6a701c568545dCfcB03FcB875f56beddCa.
+0x5B38Da6a701c568545dCfcB03FcB875f56beddC4&4
+0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
+0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
+"0xwr5"
+7u
+`*sfsfg
+gsgwgewt
+ewtew
+afsgfa
+safa*`
+6.8324e9
++abc-xabx+5
+int x;
+x = 100;
+x = x + 12;
+33.13+3
+c + +f++
+i += 3
+-21.3
+-345.2
+._ce9.544f.d
+99.77.a
+55.4
+99.77.a
+aa.x.3.s
+q.bq.s
+.56bc7.77
+4
+.$dshjs.sd
+Void interface(((a<<<==b
+9.avb8x.44
+Char c='\\n'+'n'+r'\r'+'\
+.a4
+/44.8
+a=>b
+int status = 5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+address adr = 0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB;
+contract checkcompiler{ 
+int i = 0;
+address adr = 0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB;
+function host() public{
+do{
+i++;
+}while(i<=5);
+}
+function read() public view returns(int){
+return i;
+}
+}
+COMMENT
+C4&4..0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
+a.0x5B38Da6a701c568545dCfcB03FcB875f56bedd.0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db.0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
+0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
+.83564df
+5.5
+0x242f.0x24
+a.a.
+5.5
