@@ -1,12 +1,24 @@
 capsol version 0.1;
 
+`*
+    @author hazique,
+    Zia,
+    Noman
+*`
+
+
 contract Book{
     
     struct Books{
         string title;
         string author;
         string isbn;
+        int j = -4254.4;
+        int i = -331;
+        alpha a = 'h';
     }
+
+    $$This is comment
     
     Books[] private BooksCollection;
     

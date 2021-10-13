@@ -16,8 +16,8 @@ public class Factory {
     public static ArrayList<String> Operators = new ArrayList<>();
     public static ArrayList<Factory> oFactories = new ArrayList<>();
     public static ArrayList<Factory> oOperators = new ArrayList<>();
+    public static ArrayList<Factory> oPunctuators = new ArrayList<>();
     public static ArrayList<Character> EscapeCharacters = new ArrayList<>();
-    public static ArrayList<String> OperatorsToken = new ArrayList<>();
     private static Matcher match;
     private static Pattern identifier;
     private static Pattern SignedFloatingPointNumber;
@@ -48,6 +48,12 @@ public class Factory {
         oFactory.ClassName = "UnsignedInteger-Keyword";
         KeyWords = new ArrayList<>();
         KeyWords.add("uint");
+        oFactory.KeyWords = KeyWords;
+        oFactories.add(oFactory);
+        
+         oFactory = new Factory();
+        oFactory.ClassName = "Character-Keyword";
+        KeyWords = new ArrayList<>();
         KeyWords.add("alpha");
         oFactory.KeyWords = KeyWords;
         oFactories.add(oFactory);
@@ -72,8 +78,8 @@ public class Factory {
         KeyWords.add("enum");
         oFactory.KeyWords = KeyWords;
         oFactories.add(oFactory);
-        
-         oFactory = new Factory();
+
+        oFactory = new Factory();
         oFactory.ClassName = "Struct-Keyword";
         KeyWords = new ArrayList<>();
         KeyWords.add("struct");
@@ -184,7 +190,7 @@ public class Factory {
         KeyWords.add("require");
         oFactory.KeyWords = KeyWords;
         oFactories.add(oFactory);
-        
+
         oFactory = new Factory();
         oFactory.ClassName = "Function-Keyword";
         KeyWords = new ArrayList<>();
@@ -442,21 +448,105 @@ public class Factory {
         _Operators.add("&");
         oFactory1.KeyWords = _Operators;
         oOperators.add(oFactory1);
-        
+
         oFactory1 = new Factory();
         oFactory1.ClassName = "Bitwise-4";
         _Operators = new ArrayList<>();
         _Operators.add("^");
         oFactory1.KeyWords = _Operators;
         oOperators.add(oFactory1);
-        
-         oFactory1 = new Factory();
+
+        oFactory1 = new Factory();
         oFactory1.ClassName = "Bitwise-5";
         _Operators = new ArrayList<>();
         _Operators.add("|");
         oFactory1.KeyWords = _Operators;
         oOperators.add(oFactory1);
 
+        //Punctuators Token
+        Factory oFactory2 = new Factory();
+        oFactory2.ClassName = "Left-Curly-Brace";
+        ArrayList<String> _Punctuators = new ArrayList<>();
+        _Punctuators.add("{");
+        oFactory2.KeyWords = _Punctuators;
+        oPunctuators.add(oFactory2);
+
+        oFactory2 = new Factory();
+        oFactory2.ClassName = "Right-Curly-Brace";
+        _Punctuators = new ArrayList<>();
+        _Punctuators.add("}");
+        oFactory2.KeyWords = _Punctuators;
+        oPunctuators.add(oFactory2);
+
+        oFactory2 = new Factory();
+        oFactory2.ClassName = "Right-Round-Bracket";
+        _Punctuators = new ArrayList<>();
+        _Punctuators.add("(");
+        oFactory2.KeyWords = _Punctuators;
+        oPunctuators.add(oFactory2);
+
+        oFactory2 = new Factory();
+        oFactory2.ClassName = "Left-Round-Bracket";
+        _Punctuators = new ArrayList<>();
+        _Punctuators.add(")");
+        oFactory2.KeyWords = _Punctuators;
+        oPunctuators.add(oFactory2);
+
+        oFactory2 = new Factory();
+        oFactory2.ClassName = "Right-Square-Bracket";
+        _Punctuators = new ArrayList<>();
+        _Punctuators.add("[");
+        oFactory2.KeyWords = _Punctuators;
+        oPunctuators.add(oFactory2);
+
+        oFactory2 = new Factory();
+        oFactory2.ClassName = "Right-Square-Bracket";
+        _Punctuators = new ArrayList<>();
+        _Punctuators.add("]");
+        oFactory2.KeyWords = _Punctuators;
+        oPunctuators.add(oFactory2);
+
+        oFactory2 = new Factory();
+        oFactory2.ClassName = "Colon";
+        _Punctuators = new ArrayList<>();
+        _Punctuators.add(":");
+        oFactory2.KeyWords = _Punctuators;
+        oPunctuators.add(oFactory2);
+
+        oFactory2 = new Factory();
+        oFactory2.ClassName = "Semi-Colon";
+        _Punctuators = new ArrayList<>();
+        _Punctuators.add(";");
+        oFactory2.KeyWords = _Punctuators;
+        oPunctuators.add(oFactory2);
+
+        oFactory2 = new Factory();
+        oFactory2.ClassName = "Comma";
+        _Punctuators = new ArrayList<>();
+        _Punctuators.add(",");
+        oFactory2.KeyWords = _Punctuators;
+        oPunctuators.add(oFactory2);
+
+        oFactory2 = new Factory();
+        oFactory2.ClassName = "Dot";
+        _Punctuators = new ArrayList<>();
+        _Punctuators.add(".");
+        oFactory2.KeyWords = _Punctuators;
+        oPunctuators.add(oFactory2);
+
+        oFactory2 = new Factory();
+        oFactory2.ClassName = "Mapping-Punctuators";
+        _Punctuators = new ArrayList<>();
+        _Punctuators.add("=>");
+        oFactory2.KeyWords = _Punctuators;
+        oPunctuators.add(oFactory2);
+
+        oFactory2 = new Factory();
+        oFactory2.ClassName = "Question-Mark";
+        _Punctuators = new ArrayList<>();
+        _Punctuators.add("?");
+        oFactory2.KeyWords = _Punctuators;
+        oPunctuators.add(oFactory2);
 
 //        Punctuators
         Punctuators.add("{");

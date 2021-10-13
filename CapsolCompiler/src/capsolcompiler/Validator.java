@@ -20,6 +20,7 @@ public class Validator {
     public Token finalToken;
     static boolean isKeyword = false;
     static boolean isOperatore = false;
+    static boolean isPunctuators = false;
     char c = '+';
 
     public Validator() throws FileNotFoundException, IOException {
@@ -36,8 +37,15 @@ public class Validator {
                     }
                 });
             } else if (Factory.Punctuators.contains(word.valuePart)) {
-                finalToken = new Token("Puntuators", word.valuePart, word.lineNumber);
-                token.add(finalToken);
+                isPunctuators = false;
+                Factory.oPunctuators.forEach((punc) -> {
+                    if (punc.KeyWords.contains(word.valuePart)) {
+                        finalToken = new Token(punc.ClassName, word.valuePart, word.lineNumber);
+                        token.add(finalToken);
+                        isPunctuators = false;
+                    }
+                });
+
             } else if (Factory.isAddress(word.valuePart)) {
                 finalToken = new Token("Address", word.valuePart, word.lineNumber);
                 token.add(finalToken);
@@ -91,7 +99,7 @@ public class Validator {
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos))) {
             bw.write("[Class-Part, Value-Part, Line-Number]");
             bw.newLine();
-            bw.write("<===================================>");
+            bw.write("<========================================>");
             bw.newLine();
             token.forEach((word) -> {
                 try {
