@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -23,7 +24,8 @@ public class LexicalAnalyzer {
 
     public LexicalAnalyzer() throws FileNotFoundException, IOException {
 
-        this.inputFile = new FileInputStream("C:\\Users\\Hazique\\OneDrive\\Documents\\NetBeansProjects\\CapsolCompiler\\test\\test.txt");
+        String userDirectory = Paths.get("").toAbsolutePath().toString();
+        this.inputFile = new FileInputStream(userDirectory + "\\test\\test.txt");;
         BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(inputFile));
 
         while ((str = inputBuffer.readLine()) != null) {
@@ -167,11 +169,13 @@ public class LexicalAnalyzer {
                 IsStringStarted = true;
                 temp += charAt;
             } else if (IsStringStarted & charAt == '\\' & !IsCharStarted) {
+                temp += charAt;
                 if (i + 1 < line.length()) {
                     char nextChar = line.charAt(i + 1);
-                    if (!Factory.EscapeCharacters.contains(nextChar)) {
-                        temp += nextChar;
-                    }
+                    temp += nextChar;
+//                    if (!Factory.EscapeCharacters.contains(nextChar)) {
+//                        temp += nextChar;
+//                    }
 
                     i += 1;
                 }

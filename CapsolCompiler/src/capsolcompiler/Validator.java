@@ -34,6 +34,7 @@ public class Validator {
                 finalToken = new Token("UnsignedPoint", word.valuePart, word.lineNumber);
                 token.add(finalToken);
             } else if (Factory.isIdentifier(word.valuePart)) {
+                
                 Factory.oFactories.forEach((store) -> {
                     if (store.equals(word.valuePart)) {
                         finalToken = new Token(store.ClassName, word.valuePart, word.lineNumber);
