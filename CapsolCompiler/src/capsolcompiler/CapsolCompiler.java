@@ -10,6 +10,9 @@ import java.io.IOException;
 public class CapsolCompiler {
 
     public static void main(String[] args) throws FileNotFoundException, IOException{
+         
+//        String abc = "abc+=\\+abc-xabx+5\"dd";
+//        System.out.println(abc);
         new Factory().Initialize();
         new LexicalAnalyzer();
         new Validator();
