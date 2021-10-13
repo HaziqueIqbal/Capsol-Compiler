@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -23,7 +24,8 @@ public class LexicalAnalyzer {
 
     public LexicalAnalyzer() throws FileNotFoundException, IOException {
 
-        this.inputFile = new FileInputStream("C:\\Users\\Hazique\\OneDrive\\Documents\\NetBeansProjects\\CapsolCompiler\\test\\test.txt");
+        String userDirectory = Paths.get("").toAbsolutePath().toString();
+        this.inputFile = new FileInputStream(userDirectory + "\\test\\book.txt");
         BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(inputFile));
 
         while ((str = inputBuffer.readLine()) != null) {
@@ -47,12 +49,10 @@ public class LexicalAnalyzer {
         boolean IsAddressStarted = false;
         boolean isDigit = false;
         boolean isSignDigit = false;
-        boolean isSignAlpha = false;
         ArrayList<String> words = new ArrayList<String>();
         ArrayList<String> Punctuators = Factory.Punctuators;
         ArrayList<String> Operators = Factory.Operators;
         for (int i = 0; i < line.length(); i++) {
-//            boolean IsPointStart = false;
             String currentAndNextChar = "";
             char charAt = line.charAt(i);
             if (i != (line.length() - 1)) {
@@ -82,7 +82,7 @@ public class LexicalAnalyzer {
                 if (currentAndNextChar.contains("0x")) {
                     IsAddressStarted = true;
                 } else if (temp.contains(".")) {
-                    if (isDigit & Character.isAlphabetic(charAt)) {
+                    if (isDigit & (Character.isAlphabetic(charAt) || charAt == '_' || charAt == '$')) {
                         temp += charAt;
                     } else {
                         words.add(temp);
@@ -151,12 +151,24 @@ public class LexicalAnalyzer {
                     }
                 } else if (Character.isDigit(line.charAt(i - 1)) || Character.isDigit(line.charAt(i + 1))) {
                     if (IsPointStart) {
+                        temp += charAt;
                         words.add(temp);
                         temp = "";
-                        temp += charAt;
+
                     } else {
-                        temp += charAt;
-                        IsPointStart = true;
+                        if (charAt == '.' & !temp.isEmpty()) {
+                            if (Character.isDigit(line.charAt(i + 1)) & (Factory.isUnsignedInteger(temp) || Factory.isSignedInteger(temp)) ) {
+                                temp += charAt;
+                            } else { 
+                                words.add(temp);
+                                temp = "";
+                                temp += charAt;
+                            }
+
+                        } else {
+                            temp += charAt;
+                            IsPointStart = true;
+                        }
                     }
                 }
             } else if (charAt == '"' & !IsStringStarted & !IsCharStarted) {
@@ -167,11 +179,13 @@ public class LexicalAnalyzer {
                 IsStringStarted = true;
                 temp += charAt;
             } else if (IsStringStarted & charAt == '\\' & !IsCharStarted) {
+                temp += charAt;
                 if (i + 1 < line.length()) {
                     char nextChar = line.charAt(i + 1);
-                    if (!Factory.EscapeCharacters.contains(nextChar)) {
-                        temp += nextChar;
-                    }
+                    temp += nextChar;
+//                    if (!Factory.EscapeCharacters.contains(nextChar)) {
+//                        temp += nextChar;
+//                    }
 
                     i += 1;
                 }
@@ -209,12 +223,14 @@ public class LexicalAnalyzer {
                         i = i + 3;
                     } else {
                         temp += line.charAt(i + 1);
+
                         if (i + 2 < line.length()) {
                             temp += line.charAt(i + 2);
                             i = i + 2;
+                        } else {
+                            i = i + 1;
                         }
                     }
-
                     words.add(temp);
                     temp = "";
 
@@ -231,7 +247,7 @@ public class LexicalAnalyzer {
                 } else if (Punctuators.contains(Character.toString(charAt)) || charAt == ' ' || Operators.contains(Character.toString(charAt))
                         || Operators.contains(currentAndNextChar) || Punctuators.contains(currentAndNextChar)) {
 
-                    if ((charAt == '+' || charAt == '-') & !isSignAlpha & !isSignDigit) {
+                    if ((charAt == '+' || charAt == '-') & !isSignDigit) {
 
                         if (i != line.length() - 1) {
                             if (i > 0) {
@@ -248,10 +264,27 @@ public class LexicalAnalyzer {
                                     temp += charAt;
                                     words.add(temp);
                                     temp = "";
+                                } else if (line.charAt(i - 1) == ' ' & Character.isDigit(line.charAt(i + 1))) {
+                                    temp += charAt;
+                                } else if (Character.isAlphabetic(line.charAt(i - 1)) & Character.isDigit(line.charAt(i + 1))) {
+                                    words.add(temp);
+                                    temp = "";
+                                    temp += charAt;
+                                    words.add(temp);
+                                    temp = "";
+                                } else {
+                                    if (!temp.isEmpty()) {
+                                        words.add(temp);
+                                        temp = "";
+                                        temp += charAt;
+
+                                    } else {
+                                        temp += charAt;
+                                        words.add(temp);
+                                        temp = "";
+
+                                    }
                                 }
-                            } if (Character.isAlphabetic(line.charAt(i + 1)) || "$".equals(Character.toString(line.charAt(i + 1))) || "_".equals(Character.toString(line.charAt(i + 1)))) {
-                                temp += charAt;
-                                isSignAlpha = true;
                             } else if (Character.isDigit(line.charAt(i + 1))) {
                                 isSignDigit = true;
                                 temp += charAt;
@@ -269,12 +302,12 @@ public class LexicalAnalyzer {
                                 }
                             }
                         }
-                    } else if (charAt == '+' || charAt == '-') {
-                        if (!temp.isEmpty()) {
-                            words.add(temp);
-                            temp = "";
-                            temp += charAt;
-                        }
+//                    } else if (charAt == '+' || charAt == '-') {
+//                        if (!temp.isEmpty()) {
+//                            words.add(temp);
+//                            temp = "";
+//                            temp += charAt;
+//                        }
                     } else if (charAt == ' ' || Punctuators.contains(Character.toString(charAt)) || Operators.contains(Character.toString(charAt))) {
                         if (!"".equals(temp)) {
                             words.add(temp);

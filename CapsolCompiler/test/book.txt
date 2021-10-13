@@ -1,0 +1,29 @@
+capsol version 0.1;
+
+contract Book{
+    
+    struct Books{
+        string title;
+        string author;
+        string isbn;
+    }
+    
+    Books[] private BooksCollection;
+    
+
+    mapping(address => uint) booksToOwners;
+    
+    function addBooks(string memory _title, string memory _author, string memory _isbn)public{
+        BooksCollection.push(Books(_title,_author,_isbn));
+        uint id = BooksCollection.length - 1;
+        booksToOwners[msg.sender] = id; 
+    }
+    
+    function getBooks(address _owner) external view returns(string memory,string memory,string memory){
+        for(uint i =0;i<BooksCollection.length;i++){
+            if(booksToOwners[_owner] == i){
+                return (BooksCollection[i].title,BooksCollection[i].author,BooksCollection[i].isbn);
+            }
+        }
+    } 
+}

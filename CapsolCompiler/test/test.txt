@@ -1,6 +1,9 @@
-c = 3 + -2
+10.2
+.56bc7.77
+..500_ab85
+c=3+-2
++abc-xabx-+5
 33.13+3
-+abc-xabx+5
 ++a;        
 a++;          
 --a;        
@@ -17,6 +20,7 @@ ewtew
 afsgfa*`
 safa
 99.56.8
+"abc+=\\abc-xabx+5dd"
 str="abc+=\\+abc-xabx+5\"dd"
 Char c='\\n'+'n'+r'\r'+'\
 ..500_ab85
@@ -50,7 +54,6 @@ i += 3
 99.77.a
 aa.x.3.s
 q.bq.s
-.56bc7.77
 4
 .$dshjs.sd
 Void interface(((a<<<==b
@@ -74,7 +77,7 @@ return i;
 }
 }
 COMMENT
-C4&4..0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
+C4&4...0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
 a.0x5B38Da6a701c568545dCfcB03FcB875f56bedd.0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db.0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
 .83564df
@@ -82,3 +85,5 @@ a.0x5B38Da6a701c568545dCfcB03FcB875f56bedd.0x4B20993Bc481177ec7E8f571ceCaE8A9e22
 0x242f.0x24
 a.a.
 5.5
+""
+'a'
