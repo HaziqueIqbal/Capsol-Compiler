@@ -25,7 +25,7 @@ public class LexicalAnalyzer {
     public LexicalAnalyzer() throws FileNotFoundException, IOException {
 
         String userDirectory = Paths.get("").toAbsolutePath().toString();
-        this.inputFile = new FileInputStream(userDirectory + "\\test\\book.txt");
+        this.inputFile = new FileInputStream(userDirectory + "\\test\\test.txt");
         BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(inputFile));
 
         while ((str = inputBuffer.readLine()) != null) {
@@ -45,7 +45,7 @@ public class LexicalAnalyzer {
         String temp = "";
         boolean IsStringStarted = false;
         boolean IsCharStarted = false;
-        boolean IsPointStart = false;
+        int IsPointStart = 0;
         boolean IsAddressStarted = false;
         boolean isDigit = false;
         boolean isSignDigit = false;
@@ -103,7 +103,7 @@ public class LexicalAnalyzer {
                     } else {
                         words.add(temp);
                         temp = "";
-                        IsPointStart = false;
+                        IsPointStart = 0;
                         temp += charAt;
                     }
                 } else {
@@ -122,11 +122,11 @@ public class LexicalAnalyzer {
                     temp += charAt;
                 } else if (i == 0 & (Character.isDigit(line.charAt(i + 1)))) {
                     temp += charAt;
-                } else if ((i == 0 || line.charAt(i + 1) == '.') & IsPointStart) {
+                } else if ((i == 0 || line.charAt(i + 1) == '.') & IsPointStart > 1) {
                     temp += charAt;
                     words.add(temp);
                     temp = "";
-                } else if ((i == 0 || line.charAt(i + 1) == '.') & !IsPointStart) {
+                } else if ((i == 0 || line.charAt(i + 1) == '.') & IsPointStart == 0) {
                     if (!temp.isEmpty()) {
                         words.add(temp);
                         temp = "";
@@ -150,16 +150,16 @@ public class LexicalAnalyzer {
                         temp += charAt;
                     }
                 } else if (Character.isDigit(line.charAt(i - 1)) || Character.isDigit(line.charAt(i + 1))) {
-                    if (IsPointStart) {
+                    if (IsPointStart > 1) {
                         temp += charAt;
                         words.add(temp);
                         temp = "";
 
                     } else {
                         if (charAt == '.' & !temp.isEmpty()) {
-                            if (Character.isDigit(line.charAt(i + 1)) & (Factory.isUnsignedInteger(temp) || Factory.isSignedInteger(temp)) ) {
+                            if (Character.isDigit(line.charAt(i + 1)) & (Factory.isUnsignedInteger(temp) || Factory.isSignedInteger(temp))) {
                                 temp += charAt;
-                            } else { 
+                            } else {
                                 words.add(temp);
                                 temp = "";
                                 temp += charAt;
@@ -167,7 +167,7 @@ public class LexicalAnalyzer {
 
                         } else {
                             temp += charAt;
-                            IsPointStart = true;
+                            IsPointStart++;
                         }
                     }
                 }
@@ -308,6 +308,18 @@ public class LexicalAnalyzer {
 //                            temp = "";
 //                            temp += charAt;
 //                        }
+                    } else if (charAt == ';') {
+                        if (!temp.isEmpty()) {
+                            words.add(temp);
+                            temp = "";
+                            temp += charAt;
+                            words.add(temp);
+                            temp = "";
+                        } else {
+                            temp += charAt;
+                            words.add(temp);
+                            temp = "";
+                        }
                     } else if (charAt == ' ' || Punctuators.contains(Character.toString(charAt)) || Operators.contains(Character.toString(charAt))) {
                         if (!"".equals(temp)) {
                             words.add(temp);
