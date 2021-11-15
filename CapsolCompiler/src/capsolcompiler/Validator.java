@@ -22,6 +22,7 @@ public class Validator {
     static boolean isOperatore = false;
     static boolean isPunctuators = false;
     char c = '+';
+    public static int temp = 0;
 
     public Validator() throws FileNotFoundException, IOException {
 
@@ -97,6 +98,7 @@ public class Validator {
         FileOutputStream fos = new FileOutputStream(fout);
 
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos))) {
+
             bw.write("[Class-Part, Value-Part, Line-Number]");
             bw.newLine();
             bw.write("<========================================>");
@@ -106,11 +108,13 @@ public class Validator {
                     System.out.println("[" + word.classPart + ", " + word.valuePart + ", " + word.lineNumber + "]");
                     bw.write("[" + word.classPart + ", " + word.valuePart + ", " + word.lineNumber + "]");
                     bw.newLine();
+                    temp = word.lineNumber;
                 } catch (IOException ex) {
                     Logger.getLogger(Validator.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             });
+            bw.write("[" + "End-Marker" + ", " + "<END>" + ", " + ++temp + "]");
         }
 
     }
