@@ -347,6 +347,7 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")
                 || Validator.token.get(index).valuePart.equals("emit")
                 || Validator.token.get(index).valuePart.equals("revert")
+                || Validator.token.get(index).valuePart.equals("assert")
                 || Validator.token.get(index).valuePart.equals("return")
                 || Validator.token.get(index).valuePart.equals("continue")
                 || Validator.token.get(index).valuePart.equals("break")
@@ -413,6 +414,7 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")
                 || Validator.token.get(index).valuePart.equals("emit")
                 || Validator.token.get(index).valuePart.equals("revert")
+                || Validator.token.get(index).valuePart.equals("assert")
                 || Validator.token.get(index).valuePart.equals("return")
                 || Validator.token.get(index).valuePart.equals("continue")
                 || Validator.token.get(index).valuePart.equals("break")
@@ -467,9 +469,7 @@ public class Syntax {
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 index++;
                 if (Y()) {
-
                     return true;
-
                 } else {
                     return false;
                 }
@@ -483,19 +483,14 @@ public class Syntax {
             }
             if (Validator.token.get(index).valuePart.toLowerCase().equals("for")) {
                 if (For()) {
-
                     return true;
-
                 } else {
                     return false;
                 }
-
             }
             if (Validator.token.get(index).valuePart.toLowerCase().equals("while")) {
                 if (WhileStatement()) {
-
                     return true;
-
                 } else {
                     return false;
                 }
@@ -530,6 +525,7 @@ public class Syntax {
             }
             if (Validator.token.get(index).valuePart.toLowerCase().equals("revert")
                     || Validator.token.get(index).valuePart.toLowerCase().equals("assert")) {
+                index++;
                 if (Er_Statement()) {
                     return true;
                 } else {
@@ -2937,17 +2933,14 @@ public class Syntax {
     }
 
     boolean Er_Statement() {
-        if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+        if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
             index++;
-            if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
-                index++;
-                if (ArgList()) {
-                    if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
+            if (OE()) {
+                if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
+                    index++;
+                    if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
                         index++;
-                        if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
-                            index++;
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
