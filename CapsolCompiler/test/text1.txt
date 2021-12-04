@@ -1,0 +1,12 @@
+capsol version 0.1;
+abstract contract absCon {
+    function ss() private returns(uint,address,hazique[6]){
+        for(i=5;;this.a.fn().ih[5]++){
+            for(uint i=5;i<s;i++);
+            uint [] memory A;             
+        }
+        this.a.fn().d[4] += 7;
+        uint [] memory A;
+        do{} while (a<v);
+    }    
+}

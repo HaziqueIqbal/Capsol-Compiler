@@ -1,0 +1,78 @@
+capsol version 0.1;
+
+uint constant cons = 2;
+
+abstract contract absCon {
+    function ss(int a) private returns(uint,address,hazique[6]){
+        (xd,) = dd;
+        uint storage inFunc = 5;
+        uint [] memory A;        
+    }
+    uint [4] A = [4,5,6+6/5-10,++abs];
+    function ss(int a) private returns(uint,address,hazique[6]){
+        super.a = 5;
+        this.a.fn(a+b_a-x).k[55] = 6;
+        this.a.fn();
+        if(a<b){}
+        do {} while(a<b);
+        uint storage inFunc = 5;
+        uint [] memory A;
+        b = 6;
+    }
+
+    uint [6] A;
+    Class object = new Class();
+    Hazique[] A = new Hazique();
+    $$uint [4] A = [4,5,6+6/5];
+    uint [] A = new uint();
+    uint [4] A = [4];
+    int [] A = new uint();
+}
+
+abstract contract absCon {
+    function ss() private returns(uint,address,hazique[6]){
+        if(a<b){}
+        do {} while(a<b);
+    }
+
+    uint [] A;
+    Class object = new Class(a);
+    Hazique[] A = new Hazique();
+    uint [4] A = [4,5,66*6/5];
+    uint [] A = new uint();
+    uint [4] A = [4];
+    int [] A = new uint();
+     
+}
+
+import {mypath as id} from "mypath/path";
+import "myPath/path" as id;
+import * as my_id from "mypath/path";
+
+contract myContract is nestedContract {
+    
+    constructor(uint id, address adr) payable public {
+        uint [] A;
+        uint [4] A = [4];
+        uint [] A = new uint();
+        Class object = new Class();
+        if(a.b.c<b.fn(a*b.c)<arr().z.fn(a.b.c<b.fn(a*b.c)<arr[6].z.fn().x).x)
+        {
+            a.fn().s++;
+        }
+        else if(a>b){}
+        else{}
+        while(a){
+            if(a){}
+        }    
+        for(i = 5;i<5;this.a.fn().ih[5]++){
+            for(uint i=5;i<s;i++);
+            uint [] memory A;             
+        }   
+    }
+
+    mapping (address => uint) public Class;
+    using A for point;
+    using A for *;
+}
+

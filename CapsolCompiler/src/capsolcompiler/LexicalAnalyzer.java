@@ -25,11 +25,10 @@ public class LexicalAnalyzer {
     public LexicalAnalyzer() throws FileNotFoundException, IOException {
 
         String userDirectory = Paths.get("").toAbsolutePath().toString();
-        this.inputFile = new FileInputStream(userDirectory + "\\test\\test.txt");
+        this.inputFile = new FileInputStream(userDirectory + "\\test\\testing.txt");
         BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(inputFile));
-
+        ArrayList<String> words;
         while ((str = inputBuffer.readLine()) != null) {
-            ArrayList<String> words;
 
             words = breaker(str);
             words.forEach((word) -> {
@@ -39,6 +38,8 @@ public class LexicalAnalyzer {
             });
             lineNumber++;
         }
+        t = new tempToken("<END-MARKER>", lineNumber);
+        tempTK.add(t);
     }
 
     public static ArrayList<String> breaker(String line) {

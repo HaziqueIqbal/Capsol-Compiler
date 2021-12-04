@@ -8,6 +8,12 @@ import java.util.regex.Pattern;
  *
  * @author Hazique
  */
+class FirstSet {
+
+    public String ClassName;
+    public ArrayList<String> SetMembers;
+}
+
 public class Factory {
 
     public String ClassName;
@@ -50,8 +56,8 @@ public class Factory {
         KeyWords.add("uint");
         oFactory.KeyWords = KeyWords;
         oFactories.add(oFactory);
-        
-         oFactory = new Factory();
+
+        oFactory = new Factory();
         oFactory.ClassName = "Character-Keyword";
         KeyWords = new ArrayList<>();
         KeyWords.add("alpha");
@@ -209,6 +215,12 @@ public class Factory {
         oFactory.ClassName = "Class-Keyword";
         KeyWords = new ArrayList<>();
         KeyWords.add("contract");
+        oFactory.KeyWords = KeyWords;
+        oFactories.add(oFactory);
+        
+        oFactory = new Factory();
+        oFactory.ClassName = "Library-Keyword";
+        KeyWords = new ArrayList<>();
         KeyWords.add("library");
         oFactory.KeyWords = KeyWords;
         oFactories.add(oFactory);
@@ -597,6 +609,7 @@ public class Factory {
         EscapeCharacters.add('a');
         EscapeCharacters.add('t');
         EscapeCharacters.add('b');
+
 
 //        -----REGIX-----
 //        Regix for Identifier

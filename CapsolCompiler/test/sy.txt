@@ -1,0 +1,68 @@
+capsol version 0.1;
+abstract contract absCon{
+    function ss() private returns(uint,address,hazique[6]);
+}
+import {mypath as id} from "mypath/path";
+import "myPath/path" as id;
+import * as my_id from "mypath/path";
+
+$$constant
+uint constant pi = ;
+address constant addrr = ; $$ pending OE
+
+contract myContract is nestedContract {
+
+
+    constructor(uint id, address adr,) payable public {
+        if(a<b){}
+        else if(a>b){}
+        else{}
+        Class object = new Class();
+        uint [] A;
+        uint [4] A = [4];
+        uint [] A = new uint()
+        
+    }
+    
+    using A for point;
+    using A for *;
+    event myEvent(uint ev1, address indexed ev2) anonymous;
+
+
+    mapping (address => uint) Class;
+    point public compr = ; $$ pending OE
+
+    function ss(uint ev1, address adr) private returns(uint,address,hazique[]){
+  
+
+    }
+    
+    
+    
+    
+    struct public myStruct {
+        uint book;
+        address myAddress;
+        int fl;
+    }
+
+    enum private myEnum {a,b,cx}
+
+    modifier myModifier virtual override myfun;
+
+    function id(string memory id, uint myid) private pure name(uint name) virtual override (myfun, mydd){}
+
+}
+
+contract Empty{}
+
+library mylib{
+    function id(string memory id, uint myid) private pure name(uint name) virtual override (myfun, mydd){}
+}
+
+
+
+
+
+
+

@@ -13,6 +13,7 @@ public class CapsolCompiler {
         new Factory().Initialize();
         new LexicalAnalyzer();
         new Validator();
+        new Syntax();
     }
 
 }

@@ -70,7 +70,11 @@ public class Validator {
                 word.valuePart = word.valuePart.substring(1, word.valuePart.length() - 1);
                 finalToken = new Token("String", word.valuePart, word.lineNumber);
                 token.add(finalToken);
-            } else if (Factory.isIdentifier(word.valuePart)) {
+            }else if("<END-MARKER>".equals(word.valuePart)){
+                finalToken = new Token("End-Marker", word.valuePart, word.lineNumber);
+                token.add(finalToken);
+            } 
+            else if (Factory.isIdentifier(word.valuePart)) {
                 isKeyword = false;
                 Factory.oFactories.forEach((store) -> {
 //                    System.out.println(store.KeyWords);
@@ -114,7 +118,6 @@ public class Validator {
                 }
 
             });
-            bw.write("[" + "End-Marker" + ", " + "<END>" + ", " + ++temp + "]");
         }
 
     }
