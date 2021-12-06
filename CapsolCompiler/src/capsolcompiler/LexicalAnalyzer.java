@@ -273,6 +273,14 @@ public class LexicalAnalyzer {
                                     temp += charAt;
                                     words.add(temp);
                                     temp = "";
+                                } else if ((line.charAt(i - 1) == '/' || line.charAt(i - 1) == '*' || line.charAt(i - 1) == '+' || line.charAt(i - 1) == '-' || line.charAt(i - 1) == '%') & !Character.isDigit(i + 1)) {
+                                    if (temp.isEmpty()) {
+                                        temp += charAt;
+                                    } else {
+                                        words.add(temp);
+                                        temp = "";
+                                        temp += charAt;
+                                    }
                                 } else {
                                     if (!temp.isEmpty()) {
                                         words.add(temp);
@@ -283,7 +291,6 @@ public class LexicalAnalyzer {
                                         temp += charAt;
                                         words.add(temp);
                                         temp = "";
-
                                     }
                                 }
                             } else if (Character.isDigit(line.charAt(i + 1))) {

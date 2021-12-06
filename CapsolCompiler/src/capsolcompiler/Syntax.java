@@ -393,7 +393,7 @@ public class Syntax {
                     }
                 }
             }
-            if (Validator.token.get(index).valuePart.equals("[")) {
+            else if (Validator.token.get(index).valuePart.equals("[")) {
                 if (Array_SST()) {
                     return true;
                 }
@@ -424,17 +424,17 @@ public class Syntax {
                 if (DT_()) {
                     return true;
                 }
+                return false;
             }
             if (Validator.token.get(index).valuePart.equals("(")) {
                 if (Tuple()) {
                     return true;
                 }
+                return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("mapping-keyword")) {
                 if (Mapping()) {
-
                     return true;
-
                 } else {
                     return false;
                 }
@@ -452,6 +452,7 @@ public class Syntax {
                         }
                     }
                 }
+                return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")) {
                 if (ThisOrSuper()) {
@@ -459,12 +460,10 @@ public class Syntax {
                         index++;
                         if (X_sst()) {
                             return true;
-                        } else {
-                            return false;
-                        }
-
+                        } 
                     }
                 }
+                return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 index++;
@@ -508,6 +507,7 @@ public class Syntax {
                     index++;
                     return true;
                 }
+                return false;
             }
             if (Validator.token.get(index).valuePart.toLowerCase().equals("break")) {
                 index++;
@@ -515,6 +515,7 @@ public class Syntax {
                     index++;
                     return true;
                 }
+                return false;
             }
             if (Validator.token.get(index).valuePart.toLowerCase().equals("return")) {
                 if (ReturnStatement()) {
@@ -822,7 +823,7 @@ public class Syntax {
                 index++;
                 return true;
             }
-            if (Validator.token.get(index).valuePart.equals("=")) {
+            else if (Validator.token.get(index).valuePart.equals("=")) {
                 index++;
                 if (Validator.token.get(index).valuePart.equals("new")) {
                     index++;
@@ -863,6 +864,7 @@ public class Syntax {
                         return true;
                     }
                 }
+                return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("modifier-keyword")) {
                 if (Modifier_Def()) {
@@ -870,6 +872,7 @@ public class Syntax {
                         return true;
                     }
                 }
+                return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("struct-keyword")) {
                 if (Struct()) {
@@ -877,6 +880,7 @@ public class Syntax {
                         return true;
                     }
                 }
+                return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("enum-keyword")) {
                 if (Enum()) {
@@ -900,8 +904,7 @@ public class Syntax {
                                 return true;
                             }
                         }
-                    }
-                    if (Validator.token.get(index).valuePart.toLowerCase().equals("public")
+                    } else if (Validator.token.get(index).valuePart.toLowerCase().equals("public")
                             || Validator.token.get(index).valuePart.toLowerCase().equals("private")
                             || Validator.token.get(index).valuePart.toLowerCase().equals("internal")
                             || Validator.token.get(index).valuePart.toLowerCase().equals("constant")
@@ -913,9 +916,8 @@ public class Syntax {
                         }
 
                     }
-
                 }
-
+                return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("event-keyword")) {
                 if (Event_Def()) {
@@ -923,6 +925,7 @@ public class Syntax {
                         return true;
                     }
                 }
+                return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("mapping-keyword")) {
                 if (Mapping_()) {
@@ -942,8 +945,7 @@ public class Syntax {
                                 return true;
                             }
                         }
-                    }
-                    if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
+                    } else if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
                         if (Array_()) {
                             if (CBody1()) {
                                 return true;
@@ -951,6 +953,7 @@ public class Syntax {
                         }
                     }
                 }
+                return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("using-keyword")) {
                 if (Using()) {
@@ -1065,13 +1068,11 @@ public class Syntax {
                     }
                 }
             }
-        }
-        if (Path()) {
+        } else if (Path()) {
             if (X1()) {
                 return true;
             }
-        }
-        if (SymbolAlises()) {
+        } else if (SymbolAlises()) {
             if (Validator.token.get(index).valuePart.equals("from")) {
                 index++;
                 if (Path()) {
@@ -1491,8 +1492,7 @@ public class Syntax {
                         return true;
                     }
                 }
-            }
-            if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+            } else if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 index++;
                 return true;
             }
@@ -2031,12 +2031,10 @@ public class Syntax {
                 if (F()) {
                     return true;
                 }
-            }
-            if (constants()) {
+            } else if (constants()) {
                 index++;
                 return true;
-            }
-            if (Validator.token.get(index).valuePart.equals("(")) {
+            } else if (Validator.token.get(index).valuePart.equals("(")) {
                 index++;
                 if (OE()) {
                     if (Validator.token.get(index).valuePart.equals(")")) {
@@ -2044,8 +2042,7 @@ public class Syntax {
                         return true;
                     }
                 }
-            }
-            if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
+            } else if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
                 index++;
                 if (ThisOrSuper()) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
@@ -2053,8 +2050,7 @@ public class Syntax {
                         return true;
                     }
                 }
-            }
-            if (ThisOrSuper()) {
+            } else if (ThisOrSuper()) {
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                     index++;
                     if (F_()) {
@@ -2081,12 +2077,10 @@ public class Syntax {
                         }
                     }
                 }
-            }
-            if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
+            } else if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
                 index++;
                 return true;
-            }
-            if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
+            } else if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
                 index++;
                 if (OE()) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("]")) {
@@ -2096,8 +2090,7 @@ public class Syntax {
                         }
                     }
                 }
-            }
-            if (Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
+            } else if (Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
                 index++;
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                     index++;
@@ -2165,18 +2158,19 @@ public class Syntax {
     }
 
     boolean Arr_Opt() {
-        if (Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
-            index++;
-            if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+        if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement") || Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
+            if (Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
                 index++;
-                if (F_()) {
-                    return true;
+                if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                    index++;
+                    if (F_()) {
+                        return true;
+                    }
                 }
+            } else if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
+                index++;
+                return true;
             }
-        }
-        if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
-            index++;
-            return true;
         } else {
             if (MDM() || RO() || PM() || Validator.token.get(index).valuePart.equals(",")
                     || Validator.token.get(index).valuePart.equals("]")
@@ -2267,8 +2261,7 @@ public class Syntax {
                 if (Array1()) {
                     return true;
                 }
-            }
-            if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
+            } else if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
                 index++;
                 return true;
             }
@@ -2553,8 +2546,7 @@ public class Syntax {
                 if (Body_Else()) {
                     return true;
                 }
-            }
-            if (Validator.token.get(index).classPart.toLowerCase().equals("if-keyword")) {
+            } else if (Validator.token.get(index).classPart.toLowerCase().equals("if-keyword")) {
                 if (If()) {
                     return true;
                 }
@@ -2657,8 +2649,7 @@ public class Syntax {
                         }
                     }
                 }
-            }
-            if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
+            } else if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
                 index++;
                 if (ThisOrSuper()) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
@@ -2700,8 +2691,7 @@ public class Syntax {
         if (Validator.token.get(index).classPart.toLowerCase().equals("equal")) {
             index++;
             return true;
-        }
-        if (Validator.token.get(index).classPart.toLowerCase().equals("assignment")) {
+        } else if (Validator.token.get(index).classPart.toLowerCase().equals("assignment")) {
             index++;
             return true;
         }
@@ -2720,8 +2710,7 @@ public class Syntax {
                         return true;
                     }
                 }
-            }
-            if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
+            } else if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
                 index++;
                 if (OE()) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("]")) {
@@ -2731,8 +2720,7 @@ public class Syntax {
                         }
                     }
                 }
-            }
-            if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
+            } else if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
                 index++;
                 if (ArgList()) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
@@ -2778,8 +2766,7 @@ public class Syntax {
                     return true;
                 }
             }
-        }
-        if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
+        } else if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
             index++;
             if (OE()) {
                 if (Validator.token.get(index).valuePart.toLowerCase().equals("]")) {
@@ -2905,8 +2892,7 @@ public class Syntax {
                         }
                     }
                 }
-            }
-            if (OE()) {
+            } else if (OE()) {
                 if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
                     index++;
                     return true;
@@ -2977,8 +2963,7 @@ public class Syntax {
                 if (Tuple_2()) {
                     return true;
                 }
-            }
-            if (Validator.token.get(index).classPart.toLowerCase().equals("comma")) {
+            } else if (Validator.token.get(index).classPart.toLowerCase().equals("comma")) {
                 index++;
                 if (Tuple_3()) {
                     return true;
@@ -3010,8 +2995,7 @@ public class Syntax {
                 if (Tuple_2()) {
                     return true;
                 }
-            }
-            if (Validator.token.get(index).classPart.toLowerCase().equals("comma")) {
+            } else if (Validator.token.get(index).classPart.toLowerCase().equals("comma")) {
                 if (Tuple_2()) {
                     return true;
                 }
@@ -3030,8 +3014,7 @@ public class Syntax {
             if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
                 index++;
                 return true;
-            }
-            if (Validator.token.get(index).valuePart.toLowerCase().equals("{")) {
+            } else if (Validator.token.get(index).valuePart.toLowerCase().equals("{")) {
                 index++;
                 if (MST()) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("}")) {

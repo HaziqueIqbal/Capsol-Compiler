@@ -19,7 +19,8 @@ abstract contract absCon {
         do {} while(a<b);
         uint storage inFunc = 5;
         uint [] memory A;
-        b = 6;
+        b=6/-7.3252;
+        c = -4535/-53;
     }
 
     uint [6] A;
