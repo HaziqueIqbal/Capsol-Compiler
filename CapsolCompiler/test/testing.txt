@@ -1,4 +1,4 @@
-capsol version 0.1;
+capsol version 0.1; 
 
 uint constant cons = 2;
 
@@ -10,7 +10,9 @@ abstract contract absCon {
         uint storage inFunc = 5;
         uint [] memory A;        
     }
+
     uint [4] A = [4,5,6+6/5-10,++abs];
+
     function ss(int a) private returns(uint,address,hazique[6]){
         super.a = 5;
         this.a.fn(a+b_a-x).k[55] = 6;

@@ -1,0 +1,59 @@
+capsol version 0.1;
+
+$$uint constant cons = 2;
+
+interface car is honda{
+    enum private myEnum {a,b,cx}
+    
+    modifier myModifier virtual override myfun;
+
+    function id(string memory id, uint myid) private pure name(uint name) virtual override (myfun, mydd){}
+
+    function ss(int a) private returns(uintaddress,hazique[6]){
+        assert(a==b);
+        revert(a<b);
+        (xd,) = dd;
+        uint storageinFunc = 5;
+        for(i=5;;this.a.fn().ih[5]++){
+            for(uint i=5;i<s;i++);
+            uint [a] memory A;             
+        }
+        uint [] memory A;        
+    }
+    uint[4] A = [4,5,6+6/5-10,++abs];
+    function ss(int a) private returns(uint,address,hazique[6]){
+        super.a = 5;
+        this.a.fn(a+b_a-x).k[55] = 6;
+        this.a.fn();
+        this.a = ++a;
+        if(a<b){}
+        do {} while(a<b);
+        uint storage inFunc = 5;
+        uint [] memory A;
+        b=6/-7.3252;
+        c = -4535/-53;
+    }
+
+    uint [6] A;
+    Class object = new Class();
+    Hazique[] A = new Hazique();
+    $$uint [4] A = [4,5,6+6/5];
+    uint [] A = new uint();
+    uint [4] A = [4];
+    int [] A = new int();
+}
+
+library hotel{
+    struct public nauman{
+        int calldata a;
+    }
+    event animal(uint indexed b);
+
+    uint [6] A;
+    Class object = new Class();
+    Hazique[] A = new Hazique();
+    $$uint [4] A = [4,5,6+6/5];
+    uint [] A = new uint();
+    uint [4] A = [4];
+    int [] A = new uint();
+}

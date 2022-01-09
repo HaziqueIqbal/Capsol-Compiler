@@ -13,9 +13,11 @@ public class Syntax {
             if (Validator.token.get(index).classPart.equals("End-Marker")) {
                 System.out.println("Valid Syntax!");
             } else {
+                System.out.println("Error at line no" + Validator.token.get(index).lineNumber);
                 System.out.println("Invalid Syntax!");
             }
         } else {
+            System.out.println("Error at line no" + Validator.token.get(index).lineNumber);
             System.out.println("Invalid Syntax!");
         }
     }
@@ -392,8 +394,7 @@ public class Syntax {
                         }
                     }
                 }
-            }
-            else if (Validator.token.get(index).valuePart.equals("[")) {
+            } else if (Validator.token.get(index).valuePart.equals("[")) {
                 if (Array_SST()) {
                     return true;
                 }
@@ -460,7 +461,7 @@ public class Syntax {
                         index++;
                         if (X_sst()) {
                             return true;
-                        } 
+                        }
                     }
                 }
                 return false;
@@ -822,8 +823,7 @@ public class Syntax {
             if (Validator.token.get(index).valuePart.equals(";")) {
                 index++;
                 return true;
-            }
-            else if (Validator.token.get(index).valuePart.equals("=")) {
+            } else if (Validator.token.get(index).valuePart.equals("=")) {
                 index++;
                 if (Validator.token.get(index).valuePart.equals("new")) {
                     index++;
@@ -973,7 +973,7 @@ public class Syntax {
     }
 
     boolean Interface() {
-        if (Validator.token.get(index).classPart.equals("interface-keyword")) {
+        if (Validator.token.get(index).classPart.toLowerCase().equals("interface-keyword")) {
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 index++;
@@ -1275,7 +1275,7 @@ public class Syntax {
     boolean DataLocation() {
         if (Validator.token.get(index).valuePart.equals("memory")
                 || Validator.token.get(index).valuePart.equals("storage")
-                || Validator.token.get(index).valuePart.equals("calldate")) {
+                || Validator.token.get(index).valuePart.equals("calldata")) {
             index++;
             return true;
         } else {

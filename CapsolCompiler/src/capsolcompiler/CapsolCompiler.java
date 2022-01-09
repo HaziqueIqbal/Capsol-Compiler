@@ -14,6 +14,7 @@ public class CapsolCompiler {
         new LexicalAnalyzer();
         new Validator();
         new Syntax();
+        new Semantic();
     }
 
 }
