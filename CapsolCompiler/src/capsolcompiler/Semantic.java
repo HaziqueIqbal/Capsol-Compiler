@@ -12,21 +12,21 @@ public class Semantic {
     public static ArrayList<FunctionTable> oFunctionTableList = new ArrayList<>();
     public static int scopeCount = 0;
 
-    public void MainTable_Entry(String name, String Parent, ArrayList<classTable> classTable) throws Exception {
+    public void MainTable_Entry(String name, String type, String Parent, ArrayList<classTable> classTable) throws Exception {
         boolean response = true;
-        for (MainTable item : oMainTableList) {
+        for (MainTable item : oMainTableList) {           
             if (item.getName().equals(name)) {
                 response = false;
                 break;
             }
         }
-        if(!response){
+        if (!response) {
             throw new Exception("Contract Redeclaration Error -> " + name + " contract is already declared!");
         }
-        oMainTableList.add(new MainTable(name,Parent, classTable));
+        oMainTableList.add(new MainTable(name, type, Parent, classTable));
+        System.out.println(name + " " + type+ " " + Parent);
         response = true;
 
-        
     }
 
     public MainTable LookUp_MainTable(String name) {
@@ -75,8 +75,6 @@ public class Semantic {
         }
         return false;
     }
-    
-    
 
     public void createScope() {
         scopeCount++;
@@ -90,6 +88,11 @@ public class Semantic {
 class MainTable {
 
     private String name;
+    private String type;
+
+    public String getType() {
+        return type;
+    }
     private String Parent;
     private ArrayList<classTable> classTable;
 
@@ -105,8 +108,9 @@ class MainTable {
         return classTable;
     }
 
-    public MainTable(String name, String Parent, ArrayList<classTable> classTable) {
+    public MainTable(String name, String type, String Parent, ArrayList<classTable> classTable) {
         this.name = name;
+        this.type = type;
         this.Parent = Parent;
         this.classTable = classTable;
     }

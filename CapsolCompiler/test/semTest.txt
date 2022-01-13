@@ -1,9 +1,13 @@
 capsol version 0.1;
 
+
+uint constant my = 3;
 contract conc{}
 
-contract conc{}
+contract conc1{}
 
-abstract contract conc{
+abstract contract conc2 is conc, conc1{
 
 }
+
+interface conc3 is conc2{}

@@ -18,6 +18,8 @@ public class Syntax {
     String Cat = "";
     String Parent = "";
 
+    static boolean check_for_function = false;
+
     Semantic sm = new Semantic();
 
     public Syntax() {
@@ -69,16 +71,16 @@ public class Syntax {
     }
 
     boolean definitions() {
-        if (Validator.token.get(index).classPart.toLowerCase().equals("interface-keyword")
-                || Validator.token.get(index).classPart.toLowerCase().equals("class-keyword")
-                || Validator.token.get(index).classPart.toLowerCase().equals("abstract-keyword")
+        if (Validator.token.get(index).classPart.toLowerCase().equals("interface-keyword") // important -> done entry
+                || Validator.token.get(index).classPart.toLowerCase().equals("class-keyword") // important -> done entry
+                || Validator.token.get(index).classPart.toLowerCase().equals("abstract-keyword") // important -> done entry
                 || Validator.token.get(index).classPart.toLowerCase().equals("library-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("import-keyword")
-                || Validator.token.get(index).classPart.toLowerCase().equals("struct-keyword")
-                || Validator.token.get(index).classPart.toLowerCase().equals("enum-keyword")
-                || Validator.token.get(index).classPart.toLowerCase().equals("function-keyword")
-                || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
-                || dataTypes()) {
+                || Validator.token.get(index).classPart.toLowerCase().equals("struct-keyword") // important - if we have time left
+                || Validator.token.get(index).classPart.toLowerCase().equals("enum-keyword") // important - if we have time left
+                || Validator.token.get(index).classPart.toLowerCase().equals("function-keyword") // important
+                || dataTypes()) // Important -> done entry but work on OE left
+        {
 
             if (Validator.token.get(index).classPart.toLowerCase().equals("class-keyword")) {
                 if (CB()) {
@@ -129,7 +131,7 @@ public class Syntax {
                 return false;
             }
 
-            if (dataTypes() || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+            if (dataTypes()) {
                 if (Const_Var()) {
                     if (definitions()) {
                         return true;
@@ -160,7 +162,6 @@ public class Syntax {
 
     boolean CB() {
         if (Validator.token.get(index).classPart.toLowerCase().equals("class-keyword")) {
-            type = "Class";
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 name = Validator.token.get(index).valuePart.toLowerCase();
@@ -169,9 +170,12 @@ public class Syntax {
                     if (Validator.token.get(index).valuePart.equals("{")) {
                         classTab = new ArrayList<>();
                         try {
-                            sm.MainTable_Entry(name, Parent, classTab);
+                            if ("".equals(type)) {
+                                type = "class";
+                            }
+                            sm.MainTable_Entry(name, type, Parent, classTab);
                         } catch (Exception e) {
-                              System.out.println(e.getMessage());
+                            System.out.println(e.getMessage());
                         }
                         index++;
                         sm.createScope();
@@ -179,6 +183,9 @@ public class Syntax {
                             if (Validator.token.get(index).valuePart.equals("}")) {
                                 index++;
                                 sm.destoryScope();
+                                name = "";
+                                type = "";
+                                Parent = "";
                                 return true;
                             }
                         }
@@ -303,6 +310,7 @@ public class Syntax {
 
     boolean PL() {
         if (dataTypes() || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+            type += Validator.token.get(index).valuePart.toLowerCase();
             index++;
             if (PL_1_()) {
                 return true;
@@ -324,6 +332,7 @@ public class Syntax {
 
     boolean PL_2_() {
         if (Validator.token.get(index).classPart.toLowerCase().equals("comma")) {
+            type += ",";
             index++;
             if (PL()) {
                 return true;
@@ -971,15 +980,28 @@ public class Syntax {
 
     boolean Interface() {
         if (Validator.token.get(index).classPart.toLowerCase().equals("interface-keyword")) {
+            type = "Interface";
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                name = Validator.token.get(index).valuePart.toLowerCase();
                 index++;
                 if (inheritance()) {
                     if (Validator.token.get(index).valuePart.equals("{")) {
+                        classTab = new ArrayList<>();
+                        try {
+                            sm.MainTable_Entry(name, type, Parent, classTab);
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
                         index++;
+                        sm.createScope();
                         if (IBody()) {
                             if (Validator.token.get(index).valuePart.equals("}")) {
                                 index++;
+                                sm.destoryScope();
+                                name = "";
+                                type = "";
+                                Parent = "";
                                 return true;
                             }
                         }
@@ -1004,12 +1026,12 @@ public class Syntax {
                 return true;
             }
         }
-        return false;
+        return true;
     }
 
     boolean Abstract() {
         if (Validator.token.get(index).classPart.toLowerCase().equals("abstract-keyword")) {
-//            name = "Abstract";
+            type = "Abstract";
             index++;
             if (CB()) {
                 return true;
@@ -1238,9 +1260,11 @@ public class Syntax {
 
     boolean Pl_S() {
         if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
+            type += "[";
             index++;
             if (Size()) {
                 if (Validator.token.get(index).valuePart.toLowerCase().equals("]")) {
+                    type += "]";
                     index++;
                     return true;
                 }
@@ -1259,6 +1283,7 @@ public class Syntax {
     boolean Size() {
         if (Validator.token.get(index).classPart.toLowerCase().equals("unsignedinteger")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+            type += Validator.token.get(index).valuePart.toLowerCase();
             index++;
             return true;
         } else {
@@ -1274,6 +1299,7 @@ public class Syntax {
         if (Validator.token.get(index).valuePart.equals("memory")
                 || Validator.token.get(index).valuePart.equals("storage")
                 || Validator.token.get(index).valuePart.equals("calldata")) {
+            type += "(" + Validator.token.get(index).valuePart.toLowerCase() + ")";
             index++;
             return true;
         } else {
@@ -1307,8 +1333,10 @@ public class Syntax {
 
     boolean Function() {
         if (Validator.token.get(index).classPart.toLowerCase().equals("function-keyword")) {
+            type = "function";
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                name = Validator.token.get(index).valuePart.toLowerCase();
                 index++;
                 if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
                     index++;
@@ -1317,17 +1345,17 @@ public class Syntax {
                             index++;
                             if (Visibility()) {
                                 if (State_Mutability()) {
-                                    if (Modifier_Invocation()) {
-                                        if (Virtual()) {
-                                            if (Override_Specifier()) {
-                                                if (Fn_1()) {
-                                                    if (Fn_2()) {
-                                                        return true;
-                                                    }
+                                    //   if (Modifier_Invocation()) {  // implement in future
+                                    if (Virtual()) {
+                                        if (Override_Specifier()) {
+                                            if (Fn_1()) {
+                                                if (Fn_2()) {
+                                                    return true;
                                                 }
                                             }
                                         }
                                     }
+                                    //  }
                                 }
                             }
                         }
@@ -1549,9 +1577,11 @@ public class Syntax {
             }
             if (Validator.token.get(index).valuePart.toLowerCase().equals("{")) {
                 index++;
+                sm.createScope();
                 if (MST()) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("}")) {
                         index++;
+                        sm.destoryScope();
                         return true;
                     }
                 }
@@ -1659,16 +1689,28 @@ public class Syntax {
 
     boolean Const_Var() {
         if (dataTypes()) {
+            type = Validator.token.get(index).classPart.toLowerCase();
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("constant-keyword")) {
                 index++;
+                type += "-" + "constant";
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                    name = Validator.token.get(index).valuePart.toLowerCase();
                     index++;
                     if (Validator.token.get(index).classPart.toLowerCase().equals("equal")) {
+                        try {
+                            sm.MainTable_Entry(name, type, "-", null);
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
                         index++;
+                        //pending for OE
                         if (OE()) {
                             if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
                                 index++;
+                                name = "";
+                                type = "";
+                                Parent = "";
                                 return true;
                             }
                         }
