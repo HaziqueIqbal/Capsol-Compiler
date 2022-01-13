@@ -109,7 +109,7 @@ public class Validator {
             bw.newLine();
             token.forEach((word) -> {
                 try {
-                    System.out.println("[" + word.classPart + ", " + word.valuePart + ", " + word.lineNumber + "]");
+//                    System.out.println("[" + word.classPart + ", " + word.valuePart + ", " + word.lineNumber + "]");
                     bw.write("[" + word.classPart + ", " + word.valuePart + ", " + word.lineNumber + "]");
                     bw.newLine();
                     temp = word.lineNumber;

@@ -1,0 +1,9 @@
+capsol version 0.1;
+
+contract conc{}
+
+contract conc{}
+
+abstract contract conc{
+
+}
