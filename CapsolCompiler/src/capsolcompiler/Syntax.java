@@ -11,7 +11,7 @@ public class Syntax {
     int index = 0;
     MainTable main;
     FunctionTable func;
-    ArrayList<classTable> classTab;
+    ArrayList<ClassTable> classTab;
     String name = "";
     String type = "";
     String Acc_Mod = "";
@@ -320,8 +320,8 @@ public class Syntax {
     }
 
     boolean PL_1_() {
-        if (Pl_S()) {
-            if (DataLocation()) {
+        if (Pl_S(new StringBuilder(""))) {
+            if (DataLocation(new StringBuilder(""))) {
                 if (PL_2_()) {
                     return true;
                 }
@@ -419,7 +419,7 @@ public class Syntax {
                 || Validator.token.get(index).valuePart.equals("calldate")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || Validator.token.get(index).valuePart.equals("[")) {
-            if (DataLocation()) {
+            if (DataLocation(new StringBuilder(""))) {
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                     index++;
                     if (VDS_1()) {
@@ -772,7 +772,7 @@ public class Syntax {
                     || Validator.token.get(index).valuePart.equals("storage")
                     || Validator.token.get(index).valuePart.equals("calldate")
                     || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-                if (DataLocation()) {
+                if (DataLocation(new StringBuilder(""))) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                         index++;
                         if (Validator.token.get(index).valuePart.equals("=")) {
@@ -1173,14 +1173,27 @@ public class Syntax {
 
     boolean Struct() {
         if (Validator.token.get(index).classPart.toLowerCase().equals("struct-keyword")) {
+            type = Validator.token.get(index).classPart;
             index++;
             if (Visibility()) {
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                    name = Validator.token.get(index).valuePart;
                     index++;
                     if (Validator.token.get(index).valuePart.equals("{")) {
+                        classTab = new ArrayList<>();
+                        
+                        
                         index++;
-                        if (StrBody()) {
+                        if (StrBody(classTab)) {
+                            
                             if (Validator.token.get(index).valuePart.equals("}")) {
+                                try {
+                            new Semantic().MainTable_Entry(name, type, classTab);
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
+                                name = "";
+                        type = "";
                                 index++;
                                 return true;
                             }
@@ -1208,23 +1221,40 @@ public class Syntax {
         return false;
     }
 
-    boolean StrBody() {
+    boolean StrBody(ArrayList<ClassTable> oClassTable) {
+        StringBuilder itemType = new StringBuilder("");
         if (dataTypes()
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+            if(dataTypes()){
+                itemType.append(Validator.token.get(index).classPart);
+            }else{
+                MainTable oMainTable = new Semantic().LookUp_MainTable(Validator.token.get(index).valuePart);
+                if(oMainTable.getName() != null){
+                    if(!oMainTable.getName().equals("")){
+                        itemType.append(Validator.token.get(index).valuePart);
+                    }else{
+                        System.out.println("No Identifier found with the name: " + Validator.token.get(index).valuePart);
+                    }
+                }else{
+                        System.out.println("No Identifier found with the name: " + Validator.token.get(index).valuePart);
+                    }
+                
+            }
             index++;
-            if (Str_()) {
+            if (Str_(oClassTable, itemType)) {
                 return true;
             }
         }
         return false;
     }
 
-    boolean Str_() {
-        if (Pl_S()) {
-            if (DataLocation()) {
+    boolean Str_(ArrayList<ClassTable> oClassTable, StringBuilder itemType) {
+        if (Pl_S(itemType)) {
+            if (DataLocation(itemType)) {
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                    String itemName = Validator.token.get(index).valuePart;
                     index++;
-                    if (Str__()) {
+                    if (Str__(itemName, itemType, oClassTable)) {
                         return true;
                     }
                 }
@@ -1233,21 +1263,45 @@ public class Syntax {
         return false;
     }
 
-    boolean Str__() {
+    boolean Str__(String itemName, StringBuilder itemType, ArrayList<ClassTable> oClassTable) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
+            if(!new Semantic().LookUp_ClassTable(oClassTable, itemName)){
+                oClassTable.add(new ClassTable(itemName, itemType.toString(), "-", "-"));
+            }else{
+                System.out.println("Re-declaration error. Item with the same name as: " + itemName + " already declared.");
+            }
+            
+            
             index++;
-            if (Str__1()) {
+            if (Str__1(oClassTable)) {
                 return true;
             }
         }
         return false;
     }
 
-    boolean Str__1() {
+    boolean Str__1(ArrayList<ClassTable> oClassTable) {
+        StringBuilder itemType = new StringBuilder("");
         if (dataTypes()
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+            if(dataTypes()){
+                itemType.append(Validator.token.get(index).classPart);
+            }else{
+                MainTable oMainTable = new Semantic().LookUp_MainTable(Validator.token.get(index).valuePart);
+                if(oMainTable.getName() != null){
+                    if(!oMainTable.getName().equals("")){
+                        itemType.append(Validator.token.get(index).valuePart);
+                    }else{
+                        System.out.println("No Identifier found with the name: " + Validator.token.get(index).valuePart);
+                    }
+                }else{
+                        System.out.println("No Identifier found with the name: " + Validator.token.get(index).valuePart);
+                    }
+                
+                
+            }
             index++;
-            if (Str_()) {
+            if (Str_(oClassTable, itemType)) {
                 return true;
             }
         } else {
@@ -1258,13 +1312,13 @@ public class Syntax {
         return false;
     }
 
-    boolean Pl_S() {
+    boolean Pl_S(StringBuilder itemType) {
         if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
-            type += "[";
+            itemType.append("[");
             index++;
-            if (Size()) {
+            if (Size(itemType)) {
                 if (Validator.token.get(index).valuePart.toLowerCase().equals("]")) {
-                    type += "]";
+                    itemType.append( "]");
                     index++;
                     return true;
                 }
@@ -1280,10 +1334,10 @@ public class Syntax {
         return false;
     }
 
-    boolean Size() {
+    boolean Size(StringBuilder itemType) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("unsignedinteger")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-            type += Validator.token.get(index).valuePart.toLowerCase();
+            itemType.append(Validator.token.get(index).valuePart.toLowerCase());
             index++;
             return true;
         } else {
@@ -1295,11 +1349,11 @@ public class Syntax {
         return true;
     }
 
-    boolean DataLocation() {
+    boolean DataLocation(StringBuilder itemType) {
         if (Validator.token.get(index).valuePart.equals("memory")
                 || Validator.token.get(index).valuePart.equals("storage")
                 || Validator.token.get(index).valuePart.equals("calldata")) {
-            type += "(" + Validator.token.get(index).valuePart.toLowerCase() + ")";
+            itemType.append("(" + Validator.token.get(index).valuePart.toLowerCase() + ")");
             index++;
             return true;
         } else {
@@ -1384,8 +1438,8 @@ public class Syntax {
         if (Validator.token.get(index).valuePart.toLowerCase().equals("[")
                 || Validator.token.get(index).classPart.toLowerCase().equals("store-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-            if (Pl_S()) {
-                if (DataLocation()) {
+            if (Pl_S(new StringBuilder(""))) {
+                if (DataLocation(new StringBuilder(""))) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                         index++;
                         if (PL_2()) {
@@ -1641,14 +1695,27 @@ public class Syntax {
 
     boolean Enum() {
         if (Validator.token.get(index).classPart.toLowerCase().equals("enum-keyword")) {
+            type = Validator.token.get(index).classPart;
             index++;
             if (Visibility()) {
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                    name = Validator.token.get(index).valuePart;
                     index++;
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("{")) {
+                        classTab = new ArrayList<>();
+                       
+                        
                         index++;
-                        if (Enum_1()) {
+                        if (Enum_1(classTab)) {
+                             
                             if (Validator.token.get(index).valuePart.toLowerCase().equals("}")) {
+                                try {
+                                    new Semantic().MainTable_Entry(name, type, classTab);
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            name = "";
+                        type = "";
                                 index++;
                                 return true;
                             }
@@ -1660,22 +1727,24 @@ public class Syntax {
         return false;
     }
 
-    boolean Enum_1() {
+    boolean Enum_1(ArrayList<ClassTable> oClassTable) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+            oClassTable.add(new ClassTable(Validator.token.get(index).valuePart, "-", "-", "-"));
             index++;
-            if (Enum_2()) {
+            if (Enum_2(oClassTable)) {
                 return true;
             }
         }
         return false;
     }
 
-    boolean Enum_2() {
+    boolean Enum_2(ArrayList<ClassTable> oClassTable) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("comma")) {
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                oClassTable.add(new ClassTable(Validator.token.get(index).valuePart, "-", "-", "-"));
                 index++;
-                if (Enum_2()) {
+                if (Enum_2(oClassTable)) {
                     return true;
                 }
             }
@@ -1699,7 +1768,7 @@ public class Syntax {
                     index++;
                     if (Validator.token.get(index).classPart.toLowerCase().equals("equal")) {
                         try {
-                            sm.MainTable_Entry(name, type, "-", null);
+                            sm.MainTable_Entry(name, type);
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
                         }
@@ -2239,10 +2308,10 @@ public class Syntax {
     boolean Array_SST() {
         if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
             index++;
-            if (Size()) {
+            if (Size(new StringBuilder(""))) {
                 if (Validator.token.get(index).valuePart.equals("]")) {
                     index++;
-                    if (DataLocation()) {
+                    if (DataLocation(new StringBuilder(""))) {
                         if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                             index++;
                             if (check()) {
@@ -2260,7 +2329,7 @@ public class Syntax {
     boolean Array_() {
         if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
             index++;
-            if (Size()) {
+            if (Size(new StringBuilder(""))) {
                 if (Validator.token.get(index).valuePart.equals("]")) {
                     index++;
                     if (Visibility()) {
@@ -2384,7 +2453,7 @@ public class Syntax {
             index++;
             if (Validator.token.get(index).valuePart.equals("(")) {
                 index++;
-                if (Size()) {
+                if (Size(new StringBuilder(""))) {
                     if (Validator.token.get(index).valuePart.equals(")")) {
                         index++;
                         return true;
@@ -2455,7 +2524,7 @@ public class Syntax {
                         if (MappingKey()) {
                             if (Validator.token.get(index).valuePart.equals(")")) {
                                 index++;
-                                if (DataLocation()) {
+                                if (DataLocation(new StringBuilder(""))) {
                                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                                         index++;
                                         if (Validator.token.get(index).valuePart.equals(";")) {

@@ -2,10 +2,12 @@ package capsolcompiler;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,11 +72,10 @@ public class Validator {
                 word.valuePart = word.valuePart.substring(1, word.valuePart.length() - 1);
                 finalToken = new Token("String", word.valuePart, word.lineNumber);
                 token.add(finalToken);
-            }else if("<END-MARKER>".equals(word.valuePart)){
+            } else if ("<END-MARKER>".equals(word.valuePart)) {
                 finalToken = new Token("End-Marker", word.valuePart, word.lineNumber);
                 token.add(finalToken);
-            } 
-            else if (Factory.isIdentifier(word.valuePart)) {
+            } else if (Factory.isIdentifier(word.valuePart)) {
                 isKeyword = false;
                 Factory.oFactories.forEach((store) -> {
 //                    System.out.println(store.KeyWords);
@@ -97,8 +98,9 @@ public class Validator {
                 token.add(finalToken);
             }
         });
+        String userDirectory = Paths.get("").toAbsolutePath().toString();
 
-        File fout = new File("C:\\Users\\Hazique\\OneDrive\\Documents\\NetBeansProjects\\CapsolCompiler\\Output\\output.txt");
+        File fout = new File(userDirectory + "\\Output\\output.txt");
         FileOutputStream fos = new FileOutputStream(fout);
 
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos))) {

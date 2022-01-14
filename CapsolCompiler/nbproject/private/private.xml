@@ -12,10 +12,9 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Hazique/OneDrive/Documents/NetBeansProjects/CapsolCompiler/src/capsolcompiler/LexicalAnalyzer.java</file>
-            <file>file:/C:/Users/Hazique/OneDrive/Documents/NetBeansProjects/CapsolCompiler/src/capsolcompiler/Semantic.java</file>
-            <file>file:/C:/Users/Hazique/OneDrive/Documents/NetBeansProjects/CapsolCompiler/test/semTest.txt</file>
-            <file>file:/C:/Users/Hazique/OneDrive/Documents/NetBeansProjects/CapsolCompiler/src/capsolcompiler/Syntax.java</file>
+            <file>file:/C:/Users/ziaud/source/repos/CapsolCompiler/CapsolCompiler/src/capsolcompiler/Syntax.java</file>
+            <file>file:/C:/Users/ziaud/source/repos/CapsolCompiler/CapsolCompiler/test/semTest.txt</file>
+            <file>file:/C:/Users/ziaud/source/repos/CapsolCompiler/CapsolCompiler/src/capsolcompiler/Semantic.java</file>
         </group>
     </open-files>
 </project-private>
