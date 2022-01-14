@@ -1184,9 +1184,12 @@ public class Syntax {
                         
                         
                         index++;
+                        //as we know arrays and list are pass by refrence de default
                         if (StrBody(classTab)) {
                             
                             if (Validator.token.get(index).valuePart.equals("}")) {
+                                //we are inserting decalration into maintable after } because of speed optimization as we
+                                //will not iterate over and over again on every struct member
                                 try {
                             new Semantic().MainTable_Entry(name, type, classTab);
                         } catch (Exception e) {
@@ -1222,6 +1225,8 @@ public class Syntax {
     }
 
     boolean StrBody(ArrayList<ClassTable> oClassTable) {
+        //we are using stringbuilder instead of string because we need pass by refrence functionality that is not
+        //available in default strings as they are immutable
         StringBuilder itemType = new StringBuilder("");
         if (dataTypes()
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
@@ -1387,7 +1392,7 @@ public class Syntax {
 
     boolean Function(int check) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("function-keyword")) {
-            type = "function";
+            type = Validator.token.get(index).classPart;
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 name = Validator.token.get(index).valuePart.toLowerCase();

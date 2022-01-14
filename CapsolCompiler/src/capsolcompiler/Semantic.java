@@ -205,7 +205,7 @@ class ClassTable {
     private String type;
     private String accessModifier;
     private String typeModifier;
-
+    
     public ClassTable(String name, String type, String Access_Modifier, String Type_Modifier) {
         this.name = name;
         this.type = type;
