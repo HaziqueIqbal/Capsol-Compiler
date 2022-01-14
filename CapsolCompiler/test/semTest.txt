@@ -2,7 +2,11 @@ capsol version 0.1;
 
 
 uint constant my = 3;
-contract conc{}
+contract conc{
+constructor(uint _data) public {
+      data = _data;   
+   }
+}
 
 contract conc1{}
 
