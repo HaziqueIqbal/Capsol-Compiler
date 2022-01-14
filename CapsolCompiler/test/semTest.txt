@@ -11,3 +11,18 @@ abstract contract conc2 is conc, conc{
 }
 
 interface conc3 is conc2{}
+
+enum SomeEnum{
+firstItem,
+secondItem
+}
+
+struct Book { 
+
+      string name;
+      string writter;
+      uint id;
+      uint[g] payments;
+      uint[5] Payments;
+   }
+
