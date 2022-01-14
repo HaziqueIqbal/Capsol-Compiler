@@ -205,7 +205,7 @@ class ClassTable {
     private String type;
     private String accessModifier;
     private String typeModifier;
-    
+    private ArrayList<ClassTable> oClassTableList;
     public ClassTable(String name, String type, String Access_Modifier, String Type_Modifier) {
         this.name = name;
         this.type = type;
@@ -213,6 +213,13 @@ class ClassTable {
         this.typeModifier = Type_Modifier;
     }
 
+    public ClassTable(String name, String type, String Access_Modifier, String Type_Modifier, ArrayList<ClassTable> oClassTableList) {
+        this.name = name;
+        this.type = type;
+        this.accessModifier = Access_Modifier;
+        this.typeModifier = Type_Modifier;
+        this.oClassTableList = oClassTableList;
+    }
     public String getName() {
         return name;
     }
