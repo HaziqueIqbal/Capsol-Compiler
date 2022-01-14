@@ -24,7 +24,7 @@
 [Is-Keyword, is, 9]
 [Identifier, conc, 9]
 [Comma, ,, 9]
-[Identifier, conc1, 9]
+[Identifier, conc, 9]
 [Left-Curly-Brace, {, 9]
 [Right-Curly-Brace, }, 11]
 [Interface-Keyword, interface, 13]

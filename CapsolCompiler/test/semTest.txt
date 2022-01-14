@@ -6,7 +6,7 @@ contract conc{}
 
 contract conc1{}
 
-abstract contract conc2 is conc, conc1{
+abstract contract conc2 is conc, conc{
 
 }
 

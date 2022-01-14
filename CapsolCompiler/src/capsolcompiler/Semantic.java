@@ -14,7 +14,7 @@ public class Semantic {
 
     public void MainTable_Entry(String name, String type, String Parent, ArrayList<classTable> classTable) throws Exception {
         boolean response = true;
-        for (MainTable item : oMainTableList) {           
+        for (MainTable item : oMainTableList) {
             if (item.getName().equals(name)) {
                 response = false;
                 break;
@@ -24,9 +24,25 @@ public class Semantic {
             throw new Exception("Contract Redeclaration Error -> " + name + " contract is already declared!");
         }
         oMainTableList.add(new MainTable(name, type, Parent, classTable));
-        System.out.println(name + " " + type+ " " + Parent);
+        System.out.println(name + " " + type + " " + Parent);
         response = true;
 
+    }
+
+    public void MainTable_Entry(String name, String type, String stateMutability) throws Exception {
+        boolean response = true;
+        for (MainTable item : oMainTableList) {
+            if (item.getName().equals(name) & item.getType().equals(type)) {
+                response = false;
+                break;
+            }
+        }
+        if (!response) {
+            throw new Exception("Function Redeclaration Error -> " + name + " function is already declared!");
+        }
+        oMainTableList.add(new MainTable(name, type, stateMutability));
+        System.out.println(name + " " + type + " " + stateMutability);
+        response = true;
     }
 
     public MainTable LookUp_MainTable(String name) {
@@ -89,15 +105,26 @@ class MainTable {
 
     private String name;
     private String type;
-
-    public String getType() {
-        return type;
-    }
     private String Parent;
+    private String stateMutability;
+
+    public String getStateMutability() {
+        return stateMutability;
+    }
+
+    public MainTable(String name, String type, String stateMutability) {
+        this.name = name;
+        this.type = type;
+        this.stateMutability = stateMutability;
+    }
     private ArrayList<classTable> classTable;
 
     public String getName() {
         return name;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getParent() {
@@ -125,14 +152,14 @@ class classTable {
 
     private String name;
     private String type;
-    private String Access_Modifier;
-    private String Type_Modifier;
+    private String accessModifier;
+    private String typeModifier;
 
     public classTable(String name, String type, String Access_Modifier, String Type_Modifier) {
         this.name = name;
         this.type = type;
-        this.Access_Modifier = Access_Modifier;
-        this.Type_Modifier = Type_Modifier;
+        this.accessModifier = Access_Modifier;
+        this.typeModifier = Type_Modifier;
     }
 
     public String getName() {
@@ -144,11 +171,11 @@ class classTable {
     }
 
     public String getAccess_Modifier() {
-        return Access_Modifier;
+        return accessModifier;
     }
 
     public String getType_Modifier() {
-        return Type_Modifier;
+        return typeModifier;
     }
 
 }

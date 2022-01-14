@@ -148,7 +148,7 @@ public class Syntax {
                 return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("function-keyword")) {
-                if (Function()) {
+                if (Function(1)) {
                     if (definitions()) {
                         return true;
                     }
@@ -896,7 +896,7 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("using-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("mapping-keyword")) {
             if (Validator.token.get(index).classPart.toLowerCase().equals("function-keyword")) {
-                if (Function()) {
+                if (Function(2)) {
                     if (CBody1()) {
                         return true;
                     }
@@ -1331,7 +1331,7 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("string");
     }
 
-    boolean Function() {
+    boolean Function(int check) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("function-keyword")) {
             type = "function";
             index++;
