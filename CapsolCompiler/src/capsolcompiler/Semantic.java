@@ -10,6 +10,7 @@ public class Semantic {
 
     public static ArrayList<MainTable> oMainTableList = new ArrayList<>();
     public static ArrayList<FunctionTable> oFunctionTableList = new ArrayList<>();
+
     public static int scopeCount = 0;
 
     public void MainTable_Entry(String name, String type, String Parent, ArrayList<ClassTable> classTable) throws Exception {
@@ -46,10 +47,10 @@ public class Semantic {
 
     }
 
-    public void MainTable_Entry(String name, String type, String stateMutability) throws Exception {
+    public void MainTable_Entry_For_Function(String name, String type, String stateMutability, ArrayList<FunctionTable> oFunctionTable, boolean isFunction) throws Exception {
         boolean response = true;
         for (MainTable item : oMainTableList) {
-            if (item.getName().equals(name) & item.getType().equals(type)) {
+            if (item.getName().equals(name) && item.getType().equals(type)) {
                 response = false;
                 break;
             }
@@ -57,10 +58,26 @@ public class Semantic {
         if (!response) {
             throw new Exception("Function Redeclaration Error -> " + name + " function is already declared!");
         }
-        oMainTableList.add(new MainTable(name, type, stateMutability));
+        oMainTableList.add(new MainTable(name, type, stateMutability, isFunction, oFunctionTable));
         System.out.println(name + " " + type + " " + stateMutability);
         response = true;
     }
+    
+//    public void MainTable_Entry(String name, String type, String stateMutability, ArrayList<FunctionTable> oFunctionTableList, boolean isFunction) throws Exception {
+//        boolean response = true;
+//        for (MainTable item : oMainTableList) {
+//            if (item.getName().equals(name) && item.getType().equals(type)) {
+//                response = false;
+//                break;
+//            }
+//        }
+//        if (!response) {
+//            throw new Exception("Function Redeclaration Error -> " + name + " function is already declared!");
+//        }
+//        oMainTableList.add(new MainTable(name, type, stateMutability, isFunction, oFunctionTableList));
+//        System.out.println(name + " " + type + " " + stateMutability);
+//        response = true;
+//    }
 
     public void MainTable_Entry(String name, String type) throws Exception {
         boolean response = true;
@@ -99,6 +116,7 @@ public class Semantic {
         }
 
         oFunctionTableList.add(new FunctionTable(name, type, scopeCount));
+        System.out.println(name + " " + type + " " + scopeCount);
         response = true;
 
         return response;
@@ -123,6 +141,14 @@ public class Semantic {
         return false;
     }
     
+    public boolean LookUp_ClassTable_For_Function(ArrayList<ClassTable> oClassTableList, String name, String type){
+        for (ClassTable oClassTable : oClassTableList) {
+            if(oClassTable.getName().equals(name) && oClassTable.getType().equals(type))
+                return true;
+        }
+        return false;
+    }
+    
     public boolean compatibilityCheckForUnaray(String type, String operator) {
         if (operator.equals("++") || operator.equals("--")) {
             if (type.equals("Character") || type.equals("SignedPoint") || type.equals("UnsignedPoint")
@@ -136,7 +162,7 @@ public class Semantic {
     public void createScope() {
         scopeCount++;
     }
-
+    
     public void destoryScope() {
         scopeCount--;
     }
@@ -149,7 +175,11 @@ class MainTable {
     private String Parent;
     private String stateMutability;
     private ArrayList<ClassTable> classTable;
+private ArrayList<FunctionTable> oFunctionTable;
 
+    public ArrayList<FunctionTable> getoFunctionTable() {
+        return oFunctionTable;
+    }
     public String getStateMutability() {
         return stateMutability;
     }
@@ -179,6 +209,7 @@ class MainTable {
         this.type = type;
         this.Parent = Parent;
         this.classTable = classTable;
+        
     }
 
     public MainTable(String name, String type, ArrayList<ClassTable> classTable) {
@@ -187,12 +218,18 @@ class MainTable {
         this.classTable = classTable;
     }
 
-    public MainTable(String name, String type, String stateMutability) {
+    public MainTable(String name, String type, String stateMutability, boolean isFunction, ArrayList<FunctionTable> oFunctionTable) {
         this.name = name;
         this.type = type;
         this.stateMutability = stateMutability;
+        if(isFunction){
+            this.oFunctionTable = oFunctionTable;
+        }
     }
 
+    
+    
+    
     public MainTable(String name, String type) {
         this.name = name;
         this.type = type;
@@ -206,6 +243,7 @@ class ClassTable {
     private String accessModifier;
     private String typeModifier;
     private ArrayList<ClassTable> oClassTableList;
+    private ArrayList<FunctionTable> oFunctionTableList;
     public ClassTable(String name, String type, String Access_Modifier, String Type_Modifier) {
         this.name = name;
         this.type = type;
@@ -219,6 +257,15 @@ class ClassTable {
         this.accessModifier = Access_Modifier;
         this.typeModifier = Type_Modifier;
         this.oClassTableList = oClassTableList;
+    }
+    
+    public ClassTable(String name, String type, String Access_Modifier, String Type_Modifier, ArrayList<ClassTable> oClassTableList, ArrayList<FunctionTable> oFunctionTableList) {
+        this.name = name;
+        this.type = type;
+        this.accessModifier = Access_Modifier;
+        this.typeModifier = Type_Modifier;
+        this.oClassTableList = oClassTableList;
+        this.oFunctionTableList = oFunctionTableList;
     }
     public String getName() {
         return name;

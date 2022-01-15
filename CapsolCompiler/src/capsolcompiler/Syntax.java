@@ -15,7 +15,6 @@ public class Syntax {
     String name = "";
     String type = "";
     String Acc_Mod = "";
-    String Cat = "";
     String Parent = "";
 
     static boolean check_for_function = false;
@@ -107,7 +106,7 @@ public class Syntax {
                 return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("library-keyword")) {
-                if (Library()) {
+                if (Library(new ArrayList<ClassTable>(), "")) {
                     if (definitions()) {
                         return true;
                     }
@@ -148,7 +147,7 @@ public class Syntax {
                 return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("function-keyword")) {
-                if (Function(1)) {
+                if (Function(1, null)) {
                     if (definitions()) {
                         return true;
                     }
@@ -169,19 +168,18 @@ public class Syntax {
                 if (inheritance()) {
                     if (Validator.token.get(index).valuePart.equals("{")) {
                         classTab = new ArrayList<>();
-                        
                         index++;
                         sm.createScope();
                         if (CBody(classTab, name)) {
                             if (Validator.token.get(index).valuePart.equals("}")) {
                                 try {
-                            if ("".equals(type)) {
-                                type = "class";
-                            }
-                            sm.MainTable_Entry(name, type, Parent, classTab);
-                        } catch (Exception e) {
-                            System.out.println(e.getMessage());
-                        }
+                                    if ("".equals(type)) {
+                                        type = "class";
+                                    }
+                                    sm.MainTable_Entry(name, type, Parent, classTab);
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
                                 index++;
                                 sm.destoryScope();
                                 name = "";
@@ -246,7 +244,7 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("mapping-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("constructor-keyword")) {
             if (Constructor(oClassTable, itemName)) {
-                if (CBody1()) {
+                if (CBody1(oClassTable, itemName)) {
                     return true;
                 }
             }
@@ -288,10 +286,11 @@ public class Syntax {
                 index++;
                 sm.createScope();
                 StringBuilder pType = new StringBuilder("");
-                if (PL_(pType)) {
+                StringBuilder pName = new StringBuilder("");
+                if (PL_(pType, pName)) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
                         index++;
-                         StringBuilder accModifier = new StringBuilder("");
+                        StringBuilder accModifier = new StringBuilder("");
                         if (Con_1(accModifier)) {
                             if (Con_modifier(accModifier)) {
                                 if (Validator.token.get(index).valuePart.toLowerCase().equals("{")) {
@@ -299,7 +298,13 @@ public class Syntax {
                                     ArrayList<ClassTable> oTable = new ArrayList<>();
                                     if (MST(oTable)) {
                                         if (Validator.token.get(index).valuePart.toLowerCase().equals("}")) {
-                                            oClassTable.add(new ClassTable(itemName, itemType, accModifier.toString(), "-", oTable));
+                                            ArrayList<FunctionTable> oFunctionTable = new ArrayList<>();
+                                            String[] params = pType.toString().split(",");
+                                            String[] paramNames = pName.toString().split(",");
+                                            for (int counter = 0; counter<params.length; counter++) {
+                                                oFunctionTable.add(new FunctionTable(paramNames[counter], params[counter], Semantic.scopeCount));
+                                            }
+                                            oClassTable.add(new ClassTable(itemName, itemType + "->" + pType, accModifier.toString(), "-", oTable, oFunctionTable));
                                             sm.destoryScope();
                                             index++;
                                             return true;
@@ -316,21 +321,25 @@ public class Syntax {
         return false;
     }
 
-    boolean PL() {
+    boolean PL(StringBuilder returnsCollection) {
         if (dataTypes() || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-            type += Validator.token.get(index).valuePart.toLowerCase();
+            if (dataTypes()) {
+                returnsCollection.append(Validator.token.get(index).classPart.toLowerCase());
+            } else {
+                returnsCollection.append(Validator.token.get(index).valuePart);
+            }
             index++;
-            if (PL_1_()) {
+            if (PL_1_(returnsCollection)) {
                 return true;
             }
         }
         return false;
     }
 
-    boolean PL_1_() {
-        if (Pl_S(new StringBuilder(""))) {
-            if (DataLocation(new StringBuilder(""))) {
-                if (PL_2_()) {
+    boolean PL_1_(StringBuilder returnsCollection) {
+        if (Pl_S(returnsCollection)) {
+            if (DataLocation(returnsCollection)) {
+                if (PL_2_(returnsCollection)) {
                     return true;
                 }
             }
@@ -338,11 +347,11 @@ public class Syntax {
         return false;
     }
 
-    boolean PL_2_() {
+    boolean PL_2_(StringBuilder returnsCollection) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("comma")) {
-            type += ",";
+            returnsCollection.append(",");
             index++;
-            if (PL()) {
+            if (PL(returnsCollection)) {
                 return true;
             }
         } else {
@@ -572,7 +581,7 @@ public class Syntax {
                 }
             } else if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
                 index++;
-                if (OE()) {
+                if (OE(new StringBuilder(""))) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("]")) {
                         index++;
                         if (A_Opt_1()) {
@@ -583,7 +592,7 @@ public class Syntax {
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("equal")
                     || Validator.token.get(index).classPart.toLowerCase().equals("assignment")) {
                 if (Operator()) {
-                    if (OE()) {
+                    if (OE(new StringBuilder(""))) {
                         return true;
                     }
                 }
@@ -622,7 +631,7 @@ public class Syntax {
                 }
             } else if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
                 index++;
-                if (OE()) {
+                if (OE(new StringBuilder(""))) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("]")) {
                         index++;
                         if (A_Opt()) {
@@ -633,7 +642,7 @@ public class Syntax {
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("equal")
                     || Validator.token.get(index).classPart.toLowerCase().equals("assignment")) {
                 if (Operator()) {
-                    if (OE()) {
+                    if (OE(new StringBuilder(""))) {
                         if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
                             index++;
                             return true;
@@ -667,7 +676,7 @@ public class Syntax {
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("equal")
                     || Validator.token.get(index).classPart.toLowerCase().equals("assignment")) {
                 if (Operator()) {
-                    if (OE()) {
+                    if (OE(new StringBuilder(""))) {
                         return true;
                     }
                 }
@@ -695,7 +704,7 @@ public class Syntax {
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("equal")
                     || Validator.token.get(index).classPart.toLowerCase().equals("assignment")) {
                 if (Operator()) {
-                    if (OE()) {
+                    if (OE(new StringBuilder(""))) {
                         if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
                             index++;
                             return true;
@@ -855,13 +864,14 @@ public class Syntax {
         return false;
     }
 
-    boolean Cap_1() {
+    boolean Cap_1(ArrayList<ClassTable> oTable, String itemName, String dataType) {
         if (Validator.token.get(index).valuePart.toLowerCase().equals("[")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("public")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("private")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("internal")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("constant")
-                || Validator.token.get(index).valuePart.toLowerCase().equals("override")) {
+                || Validator.token.get(index).valuePart.toLowerCase().equals("override")
+                ||Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
             if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
                 if (Array_()) {
                     return true;
@@ -870,8 +880,9 @@ public class Syntax {
                     || Validator.token.get(index).valuePart.toLowerCase().equals("private")
                     || Validator.token.get(index).valuePart.toLowerCase().equals("internal")
                     || Validator.token.get(index).valuePart.toLowerCase().equals("constant")
-                    || Validator.token.get(index).valuePart.toLowerCase().equals("override")) {
-                if (state_Variable()) {
+                    || Validator.token.get(index).valuePart.toLowerCase().equals("override")
+                   || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                if (state_Variable(oTable, itemName, dataType)) {
                     return true;
                 }
             }
@@ -895,7 +906,7 @@ public class Syntax {
         return false;
     }
 
-    boolean CBody1() {
+    boolean CBody1(ArrayList<ClassTable> oTable, String itemName) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("struct-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("enum-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("function-keyword")
@@ -906,8 +917,8 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("using-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("mapping-keyword")) {
             if (Validator.token.get(index).classPart.toLowerCase().equals("function-keyword")) {
-                if (Function(2)) {
-                    if (CBody1()) {
+                if (Function(2, oTable)) {
+                    if (CBody1(oTable, itemName)) {
                         return true;
                     }
                 }
@@ -915,7 +926,7 @@ public class Syntax {
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("modifier-keyword")) {
                 if (Modifier_Def()) {
-                    if (CBody1()) {
+                    if (CBody1(oTable, itemName)) {
                         return true;
                     }
                 }
@@ -923,7 +934,7 @@ public class Syntax {
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("struct-keyword")) {
                 if (Struct()) {
-                    if (CBody1()) {
+                    if (CBody1(oTable, itemName)) {
                         return true;
                     }
                 }
@@ -931,16 +942,17 @@ public class Syntax {
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("enum-keyword")) {
                 if (Enum()) {
-                    if (CBody1()) {
+                    if (CBody1(oTable, itemName)) {
                         return true;
                     }
                 }
                 return false;
             }
             if (dataTypes()) {
+                String dataType = Validator.token.get(index).classPart;
                 index++;
-                if (Cap_1()) {
-                    if (CBody1()) {
+                if (Cap_1(oTable, itemName, dataType)) {
+                    if (CBody1(oTable, itemName)) {
                         return true;
                     }
                 }
@@ -948,7 +960,7 @@ public class Syntax {
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("event-keyword")) {
                 if (Event_Def()) {
-                    if (CBody1()) {
+                    if (CBody1(oTable, itemName)) {
                         return true;
                     }
                 }
@@ -956,7 +968,7 @@ public class Syntax {
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("mapping-keyword")) {
                 if (Mapping_()) {
-                    if (CBody1()) {
+                    if (CBody1(oTable, itemName)) {
                         return true;
                     }
                 }
@@ -965,7 +977,7 @@ public class Syntax {
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 index++;
                 if (Cap_2()) {
-                    if (CBody1()) {
+                    if (CBody1(oTable, itemName)) {
                         return true;
                     }
                 }
@@ -973,7 +985,7 @@ public class Syntax {
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("using-keyword")) {
                 if (Using()) {
-                    if (CBody1()) {
+                    if (CBody1(oTable, itemName)) {
                         return true;
                     }
                 }
@@ -1005,7 +1017,7 @@ public class Syntax {
                         }
                         index++;
                         sm.createScope();
-                        if (IBody()) {
+                        if (IBody(classTab, name)) {
                             if (Validator.token.get(index).valuePart.equals("}")) {
                                 index++;
                                 sm.destoryScope();
@@ -1022,7 +1034,7 @@ public class Syntax {
         return false;
     }
 
-    boolean IBody() {
+    boolean IBody(ArrayList<ClassTable> oTable, String itemName) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("modifier-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || Validator.token.get(index).classPart.toLowerCase().equals("struct-keyword")
@@ -1032,7 +1044,7 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("event-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("using-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("mapping-keyword")) {
-            if (CBody1()) {
+            if (CBody1(oTable, itemName)) {
                 return true;
             }
         }
@@ -1050,14 +1062,14 @@ public class Syntax {
         return false;
     }
 
-    boolean Library() {
+    boolean Library(ArrayList<ClassTable> oTable, String itemName) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("library-keyword")) {
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 index++;
                 if (Validator.token.get(index).valuePart.toLowerCase().equals("{")) {
                     index++;
-                    if (CBody1()) {
+                    if (CBody1(oTable, itemName)) {
                         if (Validator.token.get(index).valuePart.toLowerCase().equals("}")) {
                             index++;
                             return true;
@@ -1185,28 +1197,27 @@ public class Syntax {
         if (Validator.token.get(index).classPart.toLowerCase().equals("struct-keyword")) {
             type = Validator.token.get(index).classPart;
             index++;
-            if (Visibility()) {
+            if (Visibility(new StringBuilder(""))) {
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                     name = Validator.token.get(index).valuePart;
                     index++;
                     if (Validator.token.get(index).valuePart.equals("{")) {
                         classTab = new ArrayList<>();
-                        
-                        
+
                         index++;
                         //as we know arrays and list are pass by refrence de default
                         if (StrBody(classTab)) {
-                            
+
                             if (Validator.token.get(index).valuePart.equals("}")) {
                                 //we are inserting decalration into maintable after } because of speed optimization as we
                                 //will not iterate over and over again on every struct member
                                 try {
-                            new Semantic().MainTable_Entry(name, type, classTab);
-                        } catch (Exception e) {
-                            System.out.println(e.getMessage());
-                        }
+                                    new Semantic().MainTable_Entry(name, type, classTab);
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
                                 name = "";
-                        type = "";
+                                type = "";
                                 index++;
                                 return true;
                             }
@@ -1218,16 +1229,21 @@ public class Syntax {
         return false;
     }
 
-    boolean Visibility() {
+    boolean Visibility(StringBuilder visibilityCheck) {
         if (Validator.token.get(index).valuePart.equals("public")
                 || Validator.token.get(index).valuePart.equals("private")
                 || Validator.token.get(index).valuePart.equals("external")
                 || Validator.token.get(index).valuePart.equals("internal")) {
+            visibilityCheck.append(Validator.token.get(index).valuePart);
             index++;
             return true;
         } else {
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")
-                    || Validator.token.get(index).classPart.toLowerCase().equals("state-keyword")) {
+                    || Validator.token.get(index).classPart.toLowerCase().equals("state-keyword")
+                    || Validator.token.get(index).valuePart.toLowerCase().equals("{")
+                    || Validator.token.get(index).valuePart.toLowerCase().equals("virtual")
+                    || Validator.token.get(index).classPart.toLowerCase().equals("override-keyword")
+                    || Validator.token.get(index).classPart.toLowerCase().equals("returns-keyword")) {
                 return true;
             }
         }
@@ -1240,20 +1256,20 @@ public class Syntax {
         StringBuilder itemType = new StringBuilder("");
         if (dataTypes()
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-            if(dataTypes()){
+            if (dataTypes()) {
                 itemType.append(Validator.token.get(index).classPart);
-            }else{
+            } else {
                 MainTable oMainTable = new Semantic().LookUp_MainTable(Validator.token.get(index).valuePart);
-                if(oMainTable.getName() != null){
-                    if(!oMainTable.getName().equals("")){
+                if (oMainTable.getName() != null) {
+                    if (!oMainTable.getName().equals("")) {
                         itemType.append(Validator.token.get(index).valuePart);
-                    }else{
+                    } else {
                         System.out.println("No Identifier found with the name: " + Validator.token.get(index).valuePart);
                     }
-                }else{
-                        System.out.println("No Identifier found with the name: " + Validator.token.get(index).valuePart);
-                    }
-                
+                } else {
+                    System.out.println("No Identifier found with the name: " + Validator.token.get(index).valuePart);
+                }
+
             }
             index++;
             if (Str_(oClassTable, itemType)) {
@@ -1280,13 +1296,12 @@ public class Syntax {
 
     boolean Str__(String itemName, StringBuilder itemType, ArrayList<ClassTable> oClassTable) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
-            if(!new Semantic().LookUp_ClassTable(oClassTable, itemName)){
+            if (!new Semantic().LookUp_ClassTable(oClassTable, itemName)) {
                 oClassTable.add(new ClassTable(itemName, itemType.toString(), "-", "-"));
-            }else{
+            } else {
                 System.out.println("Re-declaration error. Item with the same name as: " + itemName + " already declared.");
             }
-            
-            
+
             index++;
             if (Str__1(oClassTable)) {
                 return true;
@@ -1299,21 +1314,20 @@ public class Syntax {
         StringBuilder itemType = new StringBuilder("");
         if (dataTypes()
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-            if(dataTypes()){
+            if (dataTypes()) {
                 itemType.append(Validator.token.get(index).classPart);
-            }else{
+            } else {
                 MainTable oMainTable = new Semantic().LookUp_MainTable(Validator.token.get(index).valuePart);
-                if(oMainTable.getName() != null){
-                    if(!oMainTable.getName().equals("")){
+                if (oMainTable.getName() != null) {
+                    if (!oMainTable.getName().equals("")) {
                         itemType.append(Validator.token.get(index).valuePart);
-                    }else{
+                    } else {
                         System.out.println("No Identifier found with the name: " + Validator.token.get(index).valuePart);
                     }
-                }else{
-                        System.out.println("No Identifier found with the name: " + Validator.token.get(index).valuePart);
-                    }
-                
-                
+                } else {
+                    System.out.println("No Identifier found with the name: " + Validator.token.get(index).valuePart);
+                }
+
             }
             index++;
             if (Str_(oClassTable, itemType)) {
@@ -1333,7 +1347,7 @@ public class Syntax {
             index++;
             if (Size(itemType)) {
                 if (Validator.token.get(index).valuePart.toLowerCase().equals("]")) {
-                    itemType.append( "]");
+                    itemType.append("]");
                     index++;
                     return true;
                 }
@@ -1400,26 +1414,31 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("string");
     }
 
-    boolean Function(int check) {
+    boolean Function(int check, ArrayList<ClassTable> oTable) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("function-keyword")) {
-            type = Validator.token.get(index).classPart;
+            String fType = Validator.token.get(index).classPart;
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-                name = Validator.token.get(index).valuePart.toLowerCase();
+                String fName = Validator.token.get(index).valuePart.toLowerCase();
                 index++;
                 if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
                     index++;
+                    sm.createScope();
                     StringBuilder pType = new StringBuilder("");
-                    if (PL_(pType)) {
+                    StringBuilder pName = new StringBuilder("");
+                    if (PL_(pType, pName)) {
                         if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
                             index++;
-                            if (Visibility()) {
-                                if (State_Mutability()) {
+                            StringBuilder visibility = new StringBuilder("");
+                            if (Visibility(visibility)) {
+                                StringBuilder typeMod = new StringBuilder("");
+                                if (State_Mutability(typeMod)) {
                                     //   if (Modifier_Invocation()) {  // implement in future
-                                    if (Virtual()) {
-                                        if (Override_Specifier()) {
-                                            if (Fn_1()) {
-                                                if (Fn_2()) {
+                                    if (Virtual(typeMod)) {
+                                        if (Override_Specifier(typeMod)) {
+                                            StringBuilder returnCollection = new StringBuilder("");
+                                            if (Fn_1(returnCollection)) {
+                                                if (Fn_2(fName, fType, pType, returnCollection, typeMod, visibility, oTable, check, pName)) {
                                                     return true;
                                                 }
                                             }
@@ -1436,16 +1455,15 @@ public class Syntax {
         return false;
     }
 
-    boolean PL_(StringBuilder pType) {
+    boolean PL_(StringBuilder pType, StringBuilder pName) {
         if (dataTypes() || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-            if(dataTypes()){
+            if (dataTypes()) {
                 pType.append(Validator.token.get(index).classPart);
-            }
-            else{
+            } else {
                 pType.append(Validator.token.get(index).valuePart);
             }
             index++;
-            if (PL_1(pType)) {
+            if (PL_1(pType, pName)) {
                 return true;
             }
         } else {
@@ -1456,15 +1474,16 @@ public class Syntax {
         return false;
     }
 
-    boolean PL_1(StringBuilder pType) {
+    boolean PL_1(StringBuilder pType, StringBuilder pName) {
         if (Validator.token.get(index).valuePart.toLowerCase().equals("[")
                 || Validator.token.get(index).classPart.toLowerCase().equals("store-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
             if (Pl_S(pType)) {
-                if (DataLocation(new StringBuilder(""))) {
+                if (DataLocation(pType)) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                        pName.append(Validator.token.get(index).valuePart);
                         index++;
-                        if (PL_2(pType)) {
+                        if (PL_2(pType, pName)) {
                             return true;
                         }
                     }
@@ -1474,11 +1493,12 @@ public class Syntax {
         return false;
     }
 
-    boolean PL_2(StringBuilder pType) {
+    boolean PL_2(StringBuilder pType, StringBuilder pName) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("comma")) {
             pType.append(",");
+            pName.append(",");
             index++;
-            if (PL_3(pType)) {
+            if (PL_3(pType, pName)) {
                 return true;
             }
         } else {
@@ -1489,24 +1509,24 @@ public class Syntax {
         return false;
     }
 
-    boolean PL_3(StringBuilder pType) {
+    boolean PL_3(StringBuilder pType, StringBuilder pName) {
         if (dataTypes() || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-            if(dataTypes()){
+            if (dataTypes()) {
                 pType.append(Validator.token.get(index).classPart);
-            }
-            else{
+            } else {
                 pType.append(Validator.token.get(index).valuePart);
             }
             index++;
-            if (PL_1(pType)) {
+            if (PL_1(pType, pName)) {
                 return true;
             }
         }
         return false;
     }
 
-    boolean State_Mutability() {
+    boolean State_Mutability(StringBuilder stateMutability) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("state-keyword")) {
+            stateMutability.append(Validator.token.get(index).valuePart.toLowerCase());
             index++;
             return true;
         } else {
@@ -1554,8 +1574,9 @@ public class Syntax {
         return false;
     }
 
-    boolean Virtual() {
+    boolean Virtual(StringBuilder virtualCheck) {
         if (Validator.token.get(index).valuePart.toLowerCase().equals("virtual")) {
+            virtualCheck.append("," + Validator.token.get(index).valuePart.toLowerCase());
             index++;
             return true;
         } else {
@@ -1569,10 +1590,11 @@ public class Syntax {
         return false;
     }
 
-    boolean Override_Specifier() {
+    boolean Override_Specifier(StringBuilder overrideCheck) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("override-keyword")) {
+            overrideCheck.append("- " + Validator.token.get(index).classPart.toLowerCase());
             index++;
-            if (OV_1()) {
+            if (OV_1(overrideCheck)) {
                 return true;
             }
         } else {
@@ -1585,18 +1607,21 @@ public class Syntax {
         return false;
     }
 
-    boolean OV_1() {
+    boolean OV_1(StringBuilder overrideCheck) {
         if (Validator.token.get(index).valuePart.toLowerCase().equals("(")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
             if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
+                overrideCheck.append(" " + Validator.token.get(index).valuePart);
                 index++;
-                if (OV_2()) {
+                if (OV_2(overrideCheck)) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
+                        overrideCheck.append(Validator.token.get(index).valuePart);
                         index++;
                         return true;
                     }
                 }
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                overrideCheck.append(" " + Validator.token.get(index).valuePart);
                 index++;
                 return true;
             }
@@ -1604,22 +1629,25 @@ public class Syntax {
         return false;
     }
 
-    boolean OV_2() {
+    boolean OV_2(StringBuilder overrideCheck) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+            overrideCheck.append(Validator.token.get(index).valuePart);
             index++;
-            if (OV_3()) {
+            if (OV_3(overrideCheck)) {
                 return true;
             }
         }
         return false;
     }
 
-    boolean OV_3() {
+    boolean OV_3(StringBuilder overrideCheck) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("comma")) {
+            overrideCheck.append(Validator.token.get(index).valuePart);
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                overrideCheck.append(Validator.token.get(index).valuePart);
                 index++;
-                if (OV_3()) {
+                if (OV_3(overrideCheck)) {
                     return true;
                 }
             }
@@ -1631,12 +1659,12 @@ public class Syntax {
         return false;
     }
 
-    boolean Fn_1() {
+    boolean Fn_1(StringBuilder returnsCollection) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("returns-keyword")) {
             index++;
             if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
                 index++;
-                if (PL()) {
+                if (PL(returnsCollection)) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
                         index++;
                         return true;
@@ -1652,7 +1680,7 @@ public class Syntax {
         return false;
     }
 
-    boolean Fn_2() {
+    boolean Fn_2(String fName, String fType, StringBuilder pType, StringBuilder returnsCollection, StringBuilder typeMod, StringBuilder visibility, ArrayList<ClassTable> oTable, int check, StringBuilder pName) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("{")) {
             if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
@@ -1661,7 +1689,22 @@ public class Syntax {
             }
             if (Validator.token.get(index).valuePart.toLowerCase().equals("{")) {
                 index++;
-                sm.createScope();
+                if (check == 1) {
+                    try {
+                        if ("".equals(returnsCollection.toString())) {
+                            sm.MainTable_Entry(fName, pType + "", typeMod.toString());
+                        } else {
+                            sm.MainTable_Entry(fName, pType + "->" + returnsCollection, typeMod.toString());
+                        }
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                } else if (check == 2) {
+                    if(!new Semantic().LookUp_ClassTable_For_Function(oTable, fName, pType.toString() + "->" + returnsCollection))
+                        oTable.add(new ClassTable(fName, pType + "->" + returnsCollection, visibility.toString(), typeMod.toString()));
+                    else
+                        System.out.println("Function Redeclaration Error -> [:fnName] function is already declared!".replace("[:fnName]", fName));
+                }
                 if (MST(new ArrayList<ClassTable>())) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("}")) {
                         index++;
@@ -1681,11 +1724,11 @@ public class Syntax {
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 index++;
                 if (Mod_1()) {
-                    if (Virtual()) {
-                        if (Override_Specifier()) {
-                            if (Fn_2()) {
-                                return true;
-                            }
+                    if (Virtual(new StringBuilder(""))) {
+                        if (Override_Specifier(new StringBuilder(""))) {
+//                            if (Fn_2()) {
+//                                return true; // left
+//                            }
                         }
                     }
                 }
@@ -1705,7 +1748,7 @@ public class Syntax {
             }
         } else {
             if (Validator.token.get(index).valuePart.toLowerCase().equals("virtual")
-                    || Override_Specifier()) {
+                    || Override_Specifier(new StringBuilder(""))) {
                 return true;
             }
         }
@@ -1727,25 +1770,24 @@ public class Syntax {
         if (Validator.token.get(index).classPart.toLowerCase().equals("enum-keyword")) {
             type = Validator.token.get(index).classPart;
             index++;
-            if (Visibility()) {
+            if (Visibility(new StringBuilder(""))) {
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                     name = Validator.token.get(index).valuePart;
                     index++;
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("{")) {
                         classTab = new ArrayList<>();
-                       
-                        
+
                         index++;
                         if (Enum_1(classTab)) {
-                             
+
                             if (Validator.token.get(index).valuePart.toLowerCase().equals("}")) {
                                 try {
                                     new Semantic().MainTable_Entry(name, type, classTab);
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
                                 }
-                            name = "";
-                        type = "";
+                                name = "";
+                                type = "";
                                 index++;
                                 return true;
                             }
@@ -1804,7 +1846,7 @@ public class Syntax {
                         }
                         index++;
                         //pending for OE
-                        if (OE()) {
+                        if (OE(new StringBuilder(""))) {
                             if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
                                 index++;
                                 name = "";
@@ -1820,12 +1862,15 @@ public class Syntax {
         return false;
     }
 
-    boolean state_Variable() {
-        if (SV_1()) {
+    boolean state_Variable(ArrayList<ClassTable> oTable, String itemName, String dataType) {
+        StringBuilder modifier = new StringBuilder("");
+        if (SV_1(modifier)) {
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                String dataTypeName = Validator.token.get(index).valuePart;
                 index++;
-                if (SV_2()) {
+                if (SV_2(dataType)) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
+                        oTable.add(new ClassTable(dataTypeName,dataType,modifier.toString(),"-"));
                         index++;
                         return true;
                     }
@@ -1835,22 +1880,29 @@ public class Syntax {
         return false;
     }
 
-    boolean SV_1() {
+    boolean SV_1(StringBuilder modifier) {
         if (Validator.token.get(index).valuePart.toLowerCase().equals("public")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("private")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("constant")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("internal")
-                || Override_Specifier()) {
+                || Override_Specifier(new StringBuilder(""))) {
+            modifier.append(Validator.token.get(index).valuePart);
             index++;
             return true;
+        }else{
+            if(Validator.token.get(index).classPart.toLowerCase().equals("identifier")){
+                modifier.append("private");
+                return true;
+            }
         }
         return false;
     }
 
-    boolean SV_2() {
+    boolean SV_2(String dataType) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("equal")) {
             index++;
-            if (OE()) {
+            if (OE(new StringBuilder(""))) {
+                //lookup here
                 return true;
             }
         } else {
@@ -1962,15 +2014,15 @@ public class Syntax {
         return false;
     }
 
-    boolean OE() {
+    boolean OE(StringBuilder type) {
         if (Validator.token.get(index).valuePart.equals("!")
                 || Validator.token.get(index).valuePart.equals("(")
                 || Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || constants()) {
-            if (AE()) {
-                if (OE_()) {
+            if (AE(type)) {
+                if (OE_(type)) {
                     return true;
                 }
             }
@@ -1992,15 +2044,15 @@ public class Syntax {
         return Validator.token.get(index).classPart.toLowerCase().equals("relational");
     }
 
-    boolean AE() {
+    boolean AE(StringBuilder type) {
         if (Validator.token.get(index).valuePart.equals("!")
                 || Validator.token.get(index).valuePart.equals("(")
                 || Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || constants()) {
-            if (RE()) {
-                if (AE_()) {
+            if (RE(type)) {
+                if (AE_(type)) {
                     return true;
                 }
             }
@@ -2008,11 +2060,11 @@ public class Syntax {
         return false;
     }
 
-    boolean OE_() {
+    boolean OE_(StringBuilder type) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("logical-2")) {
             index++;
-            if (AE()) {
-                if (OE_()) {
+            if (AE(type)) {
+                if (OE_(type)) {
                     return true;
                 }
             }
@@ -2027,16 +2079,15 @@ public class Syntax {
         return false;
     }
 
-    boolean RE() {
-
+    boolean RE(StringBuilder type) {
         if (Validator.token.get(index).valuePart.equals("!")
                 || Validator.token.get(index).valuePart.equals("(")
                 || Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || constants()) {
-            if (E()) {
-                if (RE_()) {
+            if (E(type)) {
+                if (RE_(type)) {
 
                     return true;
                 }
@@ -2045,11 +2096,11 @@ public class Syntax {
         return false;
     }
 
-    boolean AE_() {
+    boolean AE_(StringBuilder type) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("logical-1")) {
             index++;
-            if (RE()) {
-                if (AE_()) {
+            if (RE(type)) {
+                if (AE_(type)) {
                     return true;
                 }
             }
@@ -2065,16 +2116,15 @@ public class Syntax {
         return false;
     }
 
-    boolean E() {
-
+    boolean E(StringBuilder type) {
         if (Validator.token.get(index).valuePart.equals("!")
                 || Validator.token.get(index).valuePart.equals("(")
                 || Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || constants()) {
-            if (T()) {
-                if (E_()) {
+            if (T(type)) {
+                if (E_(type)) {
                     return true;
                 }
             }
@@ -2082,11 +2132,11 @@ public class Syntax {
         return false;
     }
 
-    boolean RE_() {
+    boolean RE_(StringBuilder type) {
         if (RO()) {
             index++;
-            if (E()) {
-                if (RE_()) {
+            if (E(type)) {
+                if (RE_(type)) {
                     return true;
                 }
             }
@@ -2103,7 +2153,7 @@ public class Syntax {
         return false;
     }
 
-    boolean T() {
+    boolean T(StringBuilder type) {
 
         if (Validator.token.get(index).valuePart.equals("!")
                 || Validator.token.get(index).valuePart.equals("(")
@@ -2111,8 +2161,8 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || constants()) {
-            if (F()) {
-                if (T_()) {
+            if (F(type)) {
+                if (T_(type)) {
                     return true;
                 }
             }
@@ -2121,11 +2171,11 @@ public class Syntax {
         return false;
     }
 
-    boolean E_() {
+    boolean E_(StringBuilder type) {
         if (PM()) {
             index++;
-            if (T()) {
-                if (E_()) {
+            if (T(type)) {
+                if (E_(type)) {
                     return true;
                 }
             }
@@ -2143,7 +2193,7 @@ public class Syntax {
         return false;
     }
 
-    boolean F() {
+    boolean F(StringBuilder type) {
         if (Validator.token.get(index).valuePart.equals("!")
                 || Validator.token.get(index).valuePart.equals("(")
                 || Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")
@@ -2152,7 +2202,7 @@ public class Syntax {
                 || constants()) {
             if (Validator.token.get(index).valuePart.equals("!")) {
                 index++;
-                if (F()) {
+                if (F(type)) {
                     return true;
                 }
             } else if (constants()) {
@@ -2160,7 +2210,7 @@ public class Syntax {
                 return true;
             } else if (Validator.token.get(index).valuePart.equals("(")) {
                 index++;
-                if (OE()) {
+                if (OE(type)) {
                     if (Validator.token.get(index).valuePart.equals(")")) {
                         index++;
                         return true;
@@ -2177,7 +2227,7 @@ public class Syntax {
             } else if (ThisOrSuper()) {
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                     index++;
-                    if (F_()) {
+                    if (F_(type)) {
                         return true;
                     }
                 }
@@ -2186,7 +2236,7 @@ public class Syntax {
         return false;
     }
 
-    boolean F_() {
+    boolean F_(StringBuilder type) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("(")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("[")
@@ -2196,7 +2246,7 @@ public class Syntax {
                 if (ArgList()) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
                         index++;
-                        if (F_Opt()) {
+                        if (F_Opt(type)) {
                             return true;
                         }
                     }
@@ -2206,10 +2256,10 @@ public class Syntax {
                 return true;
             } else if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
                 index++;
-                if (OE()) {
+                if (OE(type)) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("]")) {
                         index++;
-                        if (Arr_Opt()) {
+                        if (Arr_Opt(type)) {
                             return true;
                         }
                     }
@@ -2218,7 +2268,7 @@ public class Syntax {
                 index++;
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                     index++;
-                    if (F_()) {
+                    if (F_(type)) {
                         return true;
                     }
                 }
@@ -2237,11 +2287,11 @@ public class Syntax {
         return false;
     }
 
-    boolean T_() {
+    boolean T_(StringBuilder type) {
         if (MDM()) {
             index++;
-            if (F()) {
-                if (T_()) {
+            if (F(type)) {
+                if (T_(type)) {
                     return true;
                 }
             }
@@ -2259,12 +2309,12 @@ public class Syntax {
         return false;
     }
 
-    boolean F_Opt() {
+    boolean F_Opt(StringBuilder type) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 index++;
-                if (F_()) {
+                if (F_(type)) {
                     return true;
                 }
             }
@@ -2281,13 +2331,13 @@ public class Syntax {
         return false;
     }
 
-    boolean Arr_Opt() {
+    boolean Arr_Opt(StringBuilder type) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement") || Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
             if (Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
                 index++;
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                     index++;
-                    if (F_()) {
+                    if (F_(type)) {
                         return true;
                     }
                 }
@@ -2362,7 +2412,7 @@ public class Syntax {
             if (Size(new StringBuilder(""))) {
                 if (Validator.token.get(index).valuePart.equals("]")) {
                     index++;
-                    if (Visibility()) {
+                    if (Visibility(new StringBuilder(""))) {
                         if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                             index++;
                             if (check()) {
@@ -2434,8 +2484,9 @@ public class Syntax {
                 || Validator.token.get(index).valuePart.toLowerCase().equals("(")
                 || Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")) {
-            if (OE()) {
-                if (itemlist1()) {
+            StringBuilder type = new StringBuilder("");
+            if (OE(type)) {
+                if (itemlist1(type)) {
                     return true;
                 }
             }
@@ -2447,11 +2498,11 @@ public class Syntax {
         return false;
     }
 
-    boolean itemlist1() {
+    boolean itemlist1(StringBuilder type) {
         if (Validator.token.get(index).valuePart.equals(",")) {
             index++;
-            if (OE()) {
-                if (itemlist1()) {
+            if (OE(type)) {
+                if (itemlist1(type)) {
                     return true;
                 }
             }
@@ -2584,7 +2635,7 @@ public class Syntax {
                         if (MappingKey()) {
                             if (Validator.token.get(index).valuePart.equals(")")) {
                                 index++;
-                                if (Visibility()) {
+                                if (Visibility(new StringBuilder(""))) {
                                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                                         index++;
                                         if (Validator.token.get(index).valuePart.equals(";")) {
