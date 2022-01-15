@@ -1,8 +1,16 @@
 capsol version 0.1;
 
-
+function ss(int storage a,uint[] b) override (b,r) returns (uint){}
+function ss(int storage a,uint[] b,Haziq ds) override (b,r) returns (uint){}
 uint constant my = 3;
-contract conc{}
+contract conc{
+constructor(uint _data) public {
+      data = _data;   
+}
+    int public a = 5;
+function ssbb(int storage a,uint[] b) public returns (uint){}
+function ssbb(int storage a,uint[] b,uint s) public returns (uint){}
+}
 
 contract conc1{}
 
@@ -13,16 +21,15 @@ abstract contract conc2 is conc, conc{
 interface conc3 is conc2{}
 
 enum SomeEnum{
-firstItem,
-secondItem
+    firstItem,
+    secondItem
 }
 
 struct Book { 
-
-      string name;
-      string writter;
-      uint id;
-      uint[g] payments;
-      uint[5] Payments;
-   }
+    string name;
+    string writter;
+    uint id;
+    uint[g] payments;
+    uint[5] Payments;
+}
 
