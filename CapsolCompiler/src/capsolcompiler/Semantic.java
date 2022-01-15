@@ -259,6 +259,15 @@ class ClassTable {
         this.oClassTableList = oClassTableList;
     }
     
+    public ClassTable(String name, String type, String Access_Modifier, String Type_Modifier, ArrayList<FunctionTable> oFunctionTableList, boolean isFunction) {
+        this.name = name;
+        this.type = type;
+        this.accessModifier = Access_Modifier;
+        this.typeModifier = Type_Modifier;
+        if(isFunction)
+            this.oFunctionTableList = oFunctionTableList;
+    }
+    
     public ClassTable(String name, String type, String Access_Modifier, String Type_Modifier, ArrayList<ClassTable> oClassTableList, ArrayList<FunctionTable> oFunctionTableList) {
         this.name = name;
         this.type = type;
