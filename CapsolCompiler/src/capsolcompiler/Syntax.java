@@ -1,6 +1,5 @@
 package capsolcompiler;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -16,7 +15,7 @@ public class Syntax {
     String name = "";
     String type = "";
     String Acc_Mod = "";
-    String Parent = "";
+    MainTable parentChecking;
 
     static boolean check_for_function = false;
 
@@ -166,7 +165,8 @@ public class Syntax {
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 name = Validator.token.get(index).valuePart.toLowerCase();
                 index++;
-                if (inheritance()) {
+                StringBuilder Parent = new StringBuilder("");
+                if (inheritance(Parent)) {
                     if (Validator.token.get(index).valuePart.equals("{")) {
                         classTab = new ArrayList<>();
                         index++;
@@ -177,7 +177,48 @@ public class Syntax {
                                     if ("".equals(type)) {
                                         type = "class";
                                     }
-                                    sm.MainTable_Entry(name, type, Parent, classTab);
+                                    if (Parent.toString().equals("-")) {
+                                        sm.MainTable_Entry(name, type, Parent, classTab);
+                                    } else {
+                                        StringBuilder errorIf = new StringBuilder("");
+                                        StringBuilder doubleEntry = new StringBuilder("");
+                                        String[] parms = Parent.toString().split(",");
+                                        int count = parms.length;
+                                        boolean flag = false;
+                                        int checkFlag = 0;
+                                        boolean undeclared = false;
+                                        boolean flagForDoubleEntry = false;
+                                        ArrayList<String> strageForDoubleEntry = new ArrayList<>();
+                                        for (int i = 0; i < parms.length; i++) {
+                                            parentChecking = sm.LookUp_MainTable(parms[i]);
+                                            if (parentChecking.getName() != null) {
+                                                if (strageForDoubleEntry.contains(parms[i])) {
+                                                    flagForDoubleEntry = true;
+                                                    doubleEntry.append(parms[i] + " ");
+                                                }
+                                            } else {
+                                                undeclared = true;
+                                                errorIf.append(parms[i] + " ");
+                                            }
+                                            checkFlag++;
+                                            if (checkFlag == count) {
+                                                flag = true;
+                                            }
+                                            strageForDoubleEntry.add(parms[i]);
+                                        }
+                                        if (flag & !flagForDoubleEntry & !undeclared) {
+                                            sm.MainTable_Entry(name, type, Parent, classTab);
+                                        } else {
+                                            System.out.println("===============Error!===============");
+                                            if (flagForDoubleEntry) {
+                                                System.out.println("- " + doubleEntry + "is already inherited.");
+                                            }
+                                            if (undeclared) {
+                                                System.out.println("- " + errorIf + "is not declared.");
+                                            }
+                                            System.out.println("====================================");
+                                        }
+                                    }
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
                                 }
@@ -185,7 +226,6 @@ public class Syntax {
                                 sm.destoryScope();
                                 name = "";
                                 type = "";
-                                Parent = "";
                                 return true;
                             }
                         }
@@ -196,32 +236,32 @@ public class Syntax {
         return false;
     }
 
-    boolean inheritance() {
+    boolean inheritance(StringBuilder Parent) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("is-keyword")) {
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-                Parent = Validator.token.get(index).valuePart.toLowerCase();
+                Parent.append(Validator.token.get(index).valuePart.toLowerCase());
                 index++;
-                if (I1()) {
+                if (I1(Parent)) {
                     return true;
                 }
             }
         } else {
             if (Validator.token.get(index).valuePart.toLowerCase().equals("{")) {
-                Parent = "-";
+                Parent.append("-");
                 return true;
             }
         }
         return false;
     }
 
-    boolean I1() {
+    boolean I1(StringBuilder Parent) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("comma")) {
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-                Parent += "," + Validator.token.get(index).valuePart.toLowerCase();
+                Parent.append("," + Validator.token.get(index).valuePart.toLowerCase());
                 index++;
-                if (I1()) {
+                if (I1(Parent)) {
                     return true;
                 }
             }
@@ -301,7 +341,7 @@ public class Syntax {
                                         if (Validator.token.get(index).valuePart.toLowerCase().equals("}")) {
                                             String[] params = pType.toString().split(",");
                                             String[] paramNames = pName.toString().split(",");
-                                            for (int counter = 0; counter<params.length; counter++) {
+                                            for (int counter = 0; counter < params.length; counter++) {
                                                 oFunctionTable.add(new FunctionTable(paramNames[counter], params[counter], Semantic.scopeCount));
                                             }
                                             oClassTable.add(new ClassTable(itemName, itemType + "->" + pType, accModifier.toString(), "-", oFunctionTable, true));
@@ -486,7 +526,7 @@ public class Syntax {
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
                 index++;
-                if (ThisOrSuper()) {
+                if (ThisOrSuper(new StringBuilder(""))) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                         index++;
                         if (Ref()) {
@@ -500,7 +540,7 @@ public class Syntax {
                 return false;
             }
             if (Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")) {
-                if (ThisOrSuper()) {
+                if (ThisOrSuper(new StringBuilder(""))) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                         index++;
                         if (X_sst()) {
@@ -871,7 +911,7 @@ public class Syntax {
                 || Validator.token.get(index).valuePart.toLowerCase().equals("internal")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("constant")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("override")
-                ||Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
             if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
                 if (Array_()) {
                     return true;
@@ -881,7 +921,7 @@ public class Syntax {
                     || Validator.token.get(index).valuePart.toLowerCase().equals("internal")
                     || Validator.token.get(index).valuePart.toLowerCase().equals("constant")
                     || Validator.token.get(index).valuePart.toLowerCase().equals("override")
-                   || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                    || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 if (state_Variable(oTable, itemName, dataType)) {
                     return true;
                 }
@@ -1007,23 +1047,74 @@ public class Syntax {
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 name = Validator.token.get(index).valuePart.toLowerCase();
                 index++;
-                if (inheritance()) {
+                StringBuilder Parent = new StringBuilder("");
+                if (inheritance(Parent)) {
                     if (Validator.token.get(index).valuePart.equals("{")) {
                         classTab = new ArrayList<>();
-                        try {
-                            sm.MainTable_Entry(name, type, Parent, classTab);
-                        } catch (Exception e) {
-                            System.out.println(e.getMessage());
-                        }
                         index++;
                         sm.createScope();
                         if (IBody(classTab, name)) {
                             if (Validator.token.get(index).valuePart.equals("}")) {
+                                try {
+                                    if (Parent.toString().equals("-")) {
+                                        sm.MainTable_Entry(name, type, Parent, classTab);
+                                    } else {
+                                        StringBuilder errorIf = new StringBuilder("");
+                                        StringBuilder doubleEntry = new StringBuilder("");
+                                        StringBuilder errorTypeIf = new StringBuilder("");
+                                        String[] parms = Parent.toString().split(",");
+                                        int count = parms.length;
+                                        boolean flag = false;
+                                        int checkFlag = 0;
+                                        boolean undeclared = false;
+                                        boolean typeCheck = false;
+                                        boolean flagForDoubleEntry = false;
+                                        ArrayList<String> strageForDoubleEntry = new ArrayList<>();
+                                        for (int i = 0; i < parms.length; i++) {
+                                            parentChecking = sm.LookUp_MainTable(parms[i]);
+                                            if (parentChecking.getName() != null && "Interface".equals(parentChecking.getType())) {
+                                                if (strageForDoubleEntry.contains(parms[i])) {
+                                                    flagForDoubleEntry = true;
+                                                    doubleEntry.append(parms[i] + " ");
+                                                }
+                                            } else {
+                                                if ("class".equals(parentChecking.getType()) || "Abstract".equals(parentChecking.getType())) {
+                                                    errorTypeIf.append(parms[i] + " ");
+                                                    typeCheck = true;
+                                                } else {
+                                                    undeclared = true;
+                                                    errorIf.append(parms[i] + " ");
+                                                }
+                                            }
+                                            checkFlag++;
+                                            if (checkFlag == count) {
+                                                flag = true;
+                                            }
+                                            strageForDoubleEntry.add(parms[i]);
+                                        }
+                                        if (flag & !flagForDoubleEntry & !undeclared & !typeCheck) {
+                                            sm.MainTable_Entry(name, type, Parent, classTab);
+                                        } else {
+                                            System.out.println("===============Error!===============");
+                                            if (flagForDoubleEntry) {
+                                                System.out.println("- " + doubleEntry + "is already inherited.");
+                                            }
+                                            if (undeclared) {
+                                                System.out.println("- " + errorIf + "is not declared.");
+                                            }
+                                            if (typeCheck) {
+                                                System.out.println("- " + errorTypeIf + "can't be inherited from contract. Required Interface");
+                                            }
+                                            System.out.println("====================================");
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
                                 index++;
                                 sm.destoryScope();
                                 name = "";
                                 type = "";
-                                Parent = "";
                                 return true;
                             }
                         }
@@ -1690,31 +1781,31 @@ public class Syntax {
             }
             if (Validator.token.get(index).valuePart.toLowerCase().equals("{")) {
                 String[] params = pType.toString().split(",");
-                        String[] paramNames = pName.toString().split(",");
-                        ArrayList<FunctionTable> oFunctionTable = new ArrayList<>();
-                        for (int counter = 0; counter < params.length; counter++) {
-                            oFunctionTable.add(new FunctionTable(paramNames[counter], params[counter], Semantic.scopeCount));
-                        }
-                index++;
-                if (check == 1) {
-                    try {
-                        
-                        if ("".equals(returnsCollection.toString())) {
-                            sm.MainTable_Entry_For_Function(fName.toString(), pType.toString() + "", typeMod.toString(), oFunctionTable, true);
-                        } else {
-                            sm.MainTable_Entry_For_Function(fName, pType + "->" + returnsCollection, typeMod.toString(), oFunctionTable, true);
-                        }
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                } else if (check == 2) {
-                    if(!new Semantic().LookUp_ClassTable_For_Function(oTable, fName, pType.toString() + "->" + returnsCollection))
-                        oTable.add(new ClassTable(fName, pType + "->" + returnsCollection, visibility.toString(), typeMod.toString(), oFunctionTable, true));
-                    else
-                        System.out.println("Function Redeclaration Error -> [:fnName] function is already declared!".replace("[:fnName]", fName));
+                String[] paramNames = pName.toString().split(",");
+                ArrayList<FunctionTable> oFunctionTable = new ArrayList<>();
+                for (int counter = 0; counter < params.length; counter++) {
+                    oFunctionTable.add(new FunctionTable(paramNames[counter], params[counter], Semantic.scopeCount));
                 }
+                index++;
                 if (MST(new ArrayList<FunctionTable>())) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("}")) {
+                        if (check == 1) {
+                            try {
+                                if ("".equals(returnsCollection.toString())) {
+                                    sm.MainTable_Entry_For_Function(fName.toString(), pType.toString() + "", typeMod.toString(), oFunctionTable, true);
+                                } else {
+                                    sm.MainTable_Entry_For_Function(fName, pType + "->" + returnsCollection, typeMod.toString(), oFunctionTable, true);
+                                }
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
+                        } else if (check == 2) {
+                            if (!new Semantic().LookUp_ClassTable_For_Function(oTable, fName, pType.toString() + "->" + returnsCollection)) {
+                                oTable.add(new ClassTable(fName, pType + "->" + returnsCollection, visibility.toString(), typeMod.toString(), oFunctionTable, true));
+                            } else {
+                                System.out.println("Function Redeclaration Error -> [:fnName] function is already declared!".replace("[:fnName]", fName));
+                            }
+                        }
                         index++;
                         sm.destoryScope();
                         return true;
@@ -1859,7 +1950,6 @@ public class Syntax {
                                 index++;
                                 name = "";
                                 type = "";
-                                Parent = "";
                                 return true;
                             }
                         }
@@ -1878,7 +1968,7 @@ public class Syntax {
                 index++;
                 if (SV_2(dataType)) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
-                        oTable.add(new ClassTable(dataTypeName,dataType,modifier.toString(),"-"));
+                        oTable.add(new ClassTable(dataTypeName, dataType, modifier.toString(), "-"));
                         index++;
                         return true;
                     }
@@ -1897,8 +1987,8 @@ public class Syntax {
             modifier.append(Validator.token.get(index).valuePart);
             index++;
             return true;
-        }else{
-            if(Validator.token.get(index).classPart.toLowerCase().equals("identifier")){
+        } else {
+            if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 modifier.append("private");
                 return true;
             }
@@ -1909,8 +1999,9 @@ public class Syntax {
     boolean SV_2(String dataType) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("equal")) {
             index++;
-            if (OE(new StringBuilder(""))) {
-                //lookup here
+            StringBuilder dataTypeX = new StringBuilder("" + dataType);
+            if (OE(dataTypeX)) {
+                
                 return true;
             }
         } else {
@@ -2030,7 +2121,8 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || constants()) {
             if (AE(type)) {
-                if (OE_(type)) {
+                StringBuilder typeX = new StringBuilder("");
+                if (OE_(typeX, type)) {
                     return true;
                 }
             }
@@ -2059,8 +2151,9 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || constants()) {
-            if (RE(type)) {
-                if (AE_(type)) {
+            StringBuilder typeX = new StringBuilder("");
+            if (RE(typeX)) {
+                if (AE_(typeX, type)) {
                     return true;
                 }
             }
@@ -2068,12 +2161,21 @@ public class Syntax {
         return false;
     }
 
-    boolean OE_(StringBuilder type) {
+    boolean OE_(StringBuilder typeX, StringBuilder typeY) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("logical-2")) {
+            String operator = Validator.token.get(index).valuePart;
             index++;
-            if (AE(type)) {
-                if (OE_(type)) {
-                    return true;
+            StringBuilder typeX_ = new StringBuilder("");
+
+            if (AE(typeX_)) {
+                StringBuilder typeX__ = sm.compatibilityCheck(typeX, typeX_, operator);
+                if (typeX__ == null) {
+                    System.out.println("Type Mismatch Error!");
+                    System.exit(0);
+                } else {
+                    if (OE_(typeX__, typeY)) {
+                        return true;
+                    }
                 }
             }
         } else {
@@ -2081,6 +2183,7 @@ public class Syntax {
                     || Validator.token.get(index).valuePart.equals("]")
                     || Validator.token.get(index).valuePart.equals(")")
                     || Validator.token.get(index).valuePart.equals(";")) {
+                typeY = typeX;
                 return true;
             }
         }
@@ -2094,9 +2197,9 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || constants()) {
-            if (E(type)) {
-                if (RE_(type)) {
-
+            StringBuilder typeX = new StringBuilder("");
+            if (E(typeX)) {
+                if (RE_(typeX, type)) {
                     return true;
                 }
             }
@@ -2104,12 +2207,20 @@ public class Syntax {
         return false;
     }
 
-    boolean AE_(StringBuilder type) {
+    boolean AE_(StringBuilder typeX, StringBuilder typeY) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("logical-1")) {
+            String operator = Validator.token.get(index).valuePart;
             index++;
-            if (RE(type)) {
-                if (AE_(type)) {
-                    return true;
+            StringBuilder typeX_ = new StringBuilder("");
+            if (RE(typeX_)) {
+                StringBuilder typeX__ = sm.compatibilityCheck(typeX, typeX_, operator);
+                if (typeX__ == null) {
+                    System.out.println("Type Mismatch Error!");
+                    System.exit(0);
+                } else {
+                    if (AE_(typeX__, typeY)) {
+                        return true;
+                    }
                 }
             }
         } else {
@@ -2118,6 +2229,7 @@ public class Syntax {
                     || Validator.token.get(index).valuePart.equals(")")
                     || Validator.token.get(index).valuePart.equals(";")
                     || Validator.token.get(index).classPart.toLowerCase().equals("logical-2")) {
+                typeY = typeX;
                 return true;
             }
         }
@@ -2131,8 +2243,9 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || constants()) {
-            if (T(type)) {
-                if (E_(type)) {
+            StringBuilder typeX = new StringBuilder("");
+            if (T(typeX)) {
+                if (E_(typeX, type)) {
                     return true;
                 }
             }
@@ -2140,12 +2253,20 @@ public class Syntax {
         return false;
     }
 
-    boolean RE_(StringBuilder type) {
+    boolean RE_(StringBuilder typeX, StringBuilder typeY) {
         if (RO()) {
+            String Operator = Validator.token.get(index).valuePart;
             index++;
-            if (E(type)) {
-                if (RE_(type)) {
-                    return true;
+            StringBuilder typeX_ = new StringBuilder("");
+            if (E(typeX_)) {
+                StringBuilder typeX__ = sm.compatibilityCheck(typeX, typeX_, Operator);
+                if (typeX__ == null) {
+                    System.out.println("Type Mismatch Error!");
+                    System.exit(0);
+                } else {
+                    if (RE_(typeX__, typeY)) {
+                        return true;
+                    }
                 }
             }
         } else {
@@ -2155,6 +2276,7 @@ public class Syntax {
                     || Validator.token.get(index).valuePart.equals(";")
                     || Validator.token.get(index).classPart.toLowerCase().equals("logical-1")
                     || Validator.token.get(index).classPart.toLowerCase().equals("logical-2")) {
+                typeY = typeX;
                 return true;
             }
         }
@@ -2169,8 +2291,9 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || constants()) {
-            if (F(type)) {
-                if (T_(type)) {
+            StringBuilder typeX = new StringBuilder("");
+            if (F(typeX)) {
+                if (T_(typeX, type)) {
                     return true;
                 }
             }
@@ -2179,12 +2302,20 @@ public class Syntax {
         return false;
     }
 
-    boolean E_(StringBuilder type) {
+    boolean E_(StringBuilder typeX, StringBuilder typeY) {
         if (PM()) {
+            String operator = Validator.token.get(index).valuePart;
             index++;
-            if (T(type)) {
-                if (E_(type)) {
-                    return true;
+            StringBuilder typeX_ = new StringBuilder("");
+            if (T(typeX_)) {
+                StringBuilder typeX__ = sm.compatibilityCheck(typeX, typeX_, operator);
+                if (typeX__ == null) {
+                    System.out.println("Type Mismatch Error!");
+                    System.exit(0);
+                } else {
+                    if (E_(typeX__, typeY)) {
+                        return true;
+                    }
                 }
             }
         } else {
@@ -2195,6 +2326,7 @@ public class Syntax {
                     || Validator.token.get(index).classPart.toLowerCase().equals("logical-1")
                     || Validator.token.get(index).classPart.toLowerCase().equals("logical-2")
                     || RO()) {
+                typeY = typeX;
                 return true;
             }
         }
@@ -2209,11 +2341,19 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")
                 || constants()) {
             if (Validator.token.get(index).valuePart.equals("!")) {
+                String operator = Validator.token.get(index).valuePart;
+                StringBuilder typeX = sm.compatibilityCheckForUnaray(type, operator);
                 index++;
-                if (F(type)) {
-                    return true;
+                if (typeX == null) {
+                    System.out.println("Type Mismatch Error!");
+                    System.exit(0);
+                } else {
+                    if (F(typeX)) {
+                        return true;
+                    }
                 }
             } else if (constants()) {
+                type.append(Validator.token.get(index).classPart);
                 index++;
                 return true;
             } else if (Validator.token.get(index).valuePart.equals("(")) {
@@ -2225,14 +2365,16 @@ public class Syntax {
                     }
                 }
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
+                String operator = Validator.token.get(index).valuePart;
                 index++;
-                if (ThisOrSuper()) {
+                StringBuilder thisOrSuperType = new StringBuilder("");
+                if (ThisOrSuper(thisOrSuperType)) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                         index++;
                         return true;
                     }
                 }
-            } else if (ThisOrSuper()) {
+            } else if (ThisOrSuper(type)) {
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                     index++;
                     if (F_(type)) {
@@ -2295,12 +2437,20 @@ public class Syntax {
         return false;
     }
 
-    boolean T_(StringBuilder type) {
+    boolean T_(StringBuilder typeX, StringBuilder typeY) {
         if (MDM()) {
+            String operator = Validator.token.get(index).valuePart;
             index++;
-            if (F(type)) {
-                if (T_(type)) {
-                    return true;
+            StringBuilder typeX_ = new StringBuilder("");
+            if (F(typeX_)) {
+                StringBuilder typeX__ = sm.compatibilityCheck(typeX, typeX_, operator);
+                if (typeX__ == null) {
+                    System.out.println("Type Mismatch Error!");
+                    System.exit(0);
+                } else {
+                    if (T_(typeX__, typeY)) {
+                        return true;
+                    }
                 }
             }
         } else {
@@ -2311,6 +2461,7 @@ public class Syntax {
                     || Validator.token.get(index).classPart.toLowerCase().equals("logical-1")
                     || Validator.token.get(index).classPart.toLowerCase().equals("logical-2")
                     || RO() || PM()) {
+                typeY = typeX;
                 return true;
             }
         }
@@ -2824,7 +2975,7 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
             if (Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")
                     || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-                if (ThisOrSuper()) {
+                if (ThisOrSuper(new StringBuilder(""))) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                         index++;
                         if (FOR_X()) {
@@ -2834,7 +2985,7 @@ public class Syntax {
                 }
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
                 index++;
-                if (ThisOrSuper()) {
+                if (ThisOrSuper(new StringBuilder(""))) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                         index++;
                         if (Ref()) {
@@ -2852,7 +3003,7 @@ public class Syntax {
     }
 
     boolean AssignmentStatement() {
-        if (ThisOrSuper()) {
+        if (ThisOrSuper(new StringBuilder(""))) {
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                 index++;
                 if (Ref()) {
@@ -2963,11 +3114,17 @@ public class Syntax {
         return false;
     }
 
-    boolean ThisOrSuper() {
+    boolean ThisOrSuper(StringBuilder type) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")) {
+            String check = Validator.token.get(index).valuePart;
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
                 index++;
+                if ("this".equals(check)) {
+                    if (classTab.contains(type)) {
+                        System.out.println("thissssss");
+                    }
+                }
                 return true;
             }
         } else {

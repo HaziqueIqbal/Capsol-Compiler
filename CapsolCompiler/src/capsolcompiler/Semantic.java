@@ -13,7 +13,7 @@ public class Semantic {
 
     public static int scopeCount = 0;
 
-    public void MainTable_Entry(String name, String type, String Parent, ArrayList<ClassTable> classTable) throws Exception {
+    public void MainTable_Entry(String name, String type, StringBuilder Parent, ArrayList<ClassTable> classTable) throws Exception {
         boolean response = true;
         for (MainTable item : oMainTableList) {
             if (item.getName().equals(name)) {
@@ -62,7 +62,7 @@ public class Semantic {
         System.out.println(name + " " + type + " " + stateMutability);
         response = true;
     }
-    
+
 //    public void MainTable_Entry(String name, String type, String stateMutability, ArrayList<FunctionTable> oFunctionTableList, boolean isFunction) throws Exception {
 //        boolean response = true;
 //        for (MainTable item : oMainTableList) {
@@ -78,7 +78,6 @@ public class Semantic {
 //        System.out.println(name + " " + type + " " + stateMutability);
 //        response = true;
 //    }
-
     public void MainTable_Entry(String name, String type) throws Exception {
         boolean response = true;
         for (MainTable item : oMainTableList) {
@@ -132,37 +131,79 @@ public class Semantic {
         }
         return oFunctionTable;
     }
+    
+//    public ClassTable lookUp_ClassTable(StringBuilder type){
+//        ClassTable oClassTableList = new ClassTable();
+//          for (ClassTable item : oClassTableList) {
+//            if (item.getName().equals(type)) {
+//                oFunctionTable = item;
+//                break;
+//            }
+//        }
+//        return false;
+//    }
 
-    public boolean LookUp_ClassTable(ArrayList<ClassTable> oClassTableList, String name){
+    public boolean LookUp_ClassTable(ArrayList<ClassTable> oClassTableList, String name) {
         for (ClassTable oClassTable : oClassTableList) {
-            if(oClassTable.getName().equals(name))
-                return true;
-        }
-        return false;
-    }
-    
-    public boolean LookUp_ClassTable_For_Function(ArrayList<ClassTable> oClassTableList, String name, String type){
-        for (ClassTable oClassTable : oClassTableList) {
-            if(oClassTable.getName().equals(name) && oClassTable.getType().equals(type))
-                return true;
-        }
-        return false;
-    }
-    
-    public boolean compatibilityCheckForUnaray(String type, String operator) {
-        if (operator.equals("++") || operator.equals("--")) {
-            if (type.equals("Character") || type.equals("SignedPoint") || type.equals("UnsignedPoint")
-                    || type.equals("UnSignedInteger") || type.equals("SignedInteger")) {
+            if (oClassTable.getName().equals(name)) {
                 return true;
             }
         }
         return false;
     }
 
+    public boolean LookUp_ClassTable_For_Function(ArrayList<ClassTable> oClassTableList, String name, String type) {
+        for (ClassTable oClassTable : oClassTableList) {
+            if (oClassTable.getName().equals(name) && oClassTable.getType().equals(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public StringBuilder compatibilityCheckForUnaray(StringBuilder type, String operator) {
+        StringBuilder typeReturn = new StringBuilder("");
+        if (operator.equals("++") || operator.equals("--")) {
+            if (type.equals("Character")) {
+                typeReturn.append("Character");
+                return typeReturn;
+            } else if (type.equals("SignedPoint")) {
+                typeReturn.append("SignedPoint");
+                return typeReturn;
+            } else if (type.equals("UnsignedPoint")) {
+                typeReturn.append("UnsignedPoint");
+                return typeReturn;
+            } else if (type.equals("UnSignedInteger")) {
+                typeReturn.append("UnSignedInteger");
+                return typeReturn;
+            } else if (type.equals("SignedInteger")) {
+                typeReturn.append("SignedInteger");
+                return typeReturn;
+            }
+        } else if (operator.equals("!")) {
+            if (type.equals("true") || type.equals("false")) {
+                typeReturn.append("boolean");
+                return typeReturn;
+            }
+        }
+        return null;
+    }
+
+    public StringBuilder compatibilityCheck(StringBuilder leftType, StringBuilder rightType, String operator) {
+
+        if (operator.equals("+") || operator.equals("-") || operator.equals("*") || operator.equals("/") || operator.equals("%")) {
+            if (leftType.equals("SignedInteger") && rightType.equals("SignedInteger")) {
+                StringBuilder type = new StringBuilder("SignedInteger");
+                return type;
+            }
+        }
+        return null;
+    }
+
     public void createScope() {
         scopeCount++;
     }
-    
+
     public void destoryScope() {
         scopeCount--;
     }
@@ -172,14 +213,15 @@ class MainTable {
 
     private String name;
     private String type;
-    private String Parent;
+    private StringBuilder Parent;
     private String stateMutability;
     private ArrayList<ClassTable> classTable;
-private ArrayList<FunctionTable> oFunctionTable;
+    private ArrayList<FunctionTable> oFunctionTable;
 
     public ArrayList<FunctionTable> getoFunctionTable() {
         return oFunctionTable;
     }
+
     public String getStateMutability() {
         return stateMutability;
     }
@@ -192,7 +234,7 @@ private ArrayList<FunctionTable> oFunctionTable;
         return type;
     }
 
-    public String getParent() {
+    public StringBuilder getParent() {
         return Parent;
     }
 
@@ -204,12 +246,12 @@ private ArrayList<FunctionTable> oFunctionTable;
 
     }
 
-    public MainTable(String name, String type, String Parent, ArrayList<ClassTable> classTable) {
+    public MainTable(String name, String type, StringBuilder Parent, ArrayList<ClassTable> classTable) {
         this.name = name;
         this.type = type;
         this.Parent = Parent;
         this.classTable = classTable;
-        
+
     }
 
     public MainTable(String name, String type, ArrayList<ClassTable> classTable) {
@@ -222,14 +264,11 @@ private ArrayList<FunctionTable> oFunctionTable;
         this.name = name;
         this.type = type;
         this.stateMutability = stateMutability;
-        if(isFunction){
+        if (isFunction) {
             this.oFunctionTable = oFunctionTable;
         }
     }
 
-    
-    
-    
     public MainTable(String name, String type) {
         this.name = name;
         this.type = type;
@@ -244,6 +283,9 @@ class ClassTable {
     private String typeModifier;
     private ArrayList<ClassTable> oClassTableList;
     private ArrayList<FunctionTable> oFunctionTableList;
+    
+    public ClassTable(){}
+
     public ClassTable(String name, String type, String Access_Modifier, String Type_Modifier) {
         this.name = name;
         this.type = type;
@@ -258,16 +300,17 @@ class ClassTable {
         this.typeModifier = Type_Modifier;
         this.oClassTableList = oClassTableList;
     }
-    
+
     public ClassTable(String name, String type, String Access_Modifier, String Type_Modifier, ArrayList<FunctionTable> oFunctionTableList, boolean isFunction) {
         this.name = name;
         this.type = type;
         this.accessModifier = Access_Modifier;
         this.typeModifier = Type_Modifier;
-        if(isFunction)
+        if (isFunction) {
             this.oFunctionTableList = oFunctionTableList;
+        }
     }
-    
+
     public ClassTable(String name, String type, String Access_Modifier, String Type_Modifier, ArrayList<ClassTable> oClassTableList, ArrayList<FunctionTable> oFunctionTableList) {
         this.name = name;
         this.type = type;
@@ -276,6 +319,7 @@ class ClassTable {
         this.oClassTableList = oClassTableList;
         this.oFunctionTableList = oFunctionTableList;
     }
+
     public String getName() {
         return name;
     }
