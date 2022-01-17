@@ -151,6 +151,16 @@ public class Semantic {
         }
         return false;
     }
+    
+    public ClassTable Get_ClassTable(ArrayList<ClassTable> oClassTableList, String name) {
+        ClassTable _oClassTable = null;
+        for (ClassTable oClassTable : oClassTableList) {
+            if (oClassTable.getName().equals(name)) {
+                _oClassTable = oClassTable;
+            }
+        }
+        return _oClassTable;
+    }
 
     public boolean LookUp_ClassTable_For_Function(ArrayList<ClassTable> oClassTableList, String name, String type) {
         for (ClassTable oClassTable : oClassTableList) {

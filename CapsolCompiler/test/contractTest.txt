@@ -1,9 +1,12 @@
 capsol version 0.1;
 contract conc{
- int public a = 4.4;
+ int public a = 6;
+    function ssbb(int storage a,uint[] b) public returns (uint){
+        uint b = this.a;
+    }
 }
 contract conc1{}
-abstract contract conc2 is conc1, conc{}
+abstract contract conc2 is conc, conc1{}
 interface u1{}
 interface u2 is u1{}
 interface conc3 is u1, u2{}
