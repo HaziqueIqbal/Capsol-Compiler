@@ -25,7 +25,7 @@ public class LexicalAnalyzer {
     public LexicalAnalyzer() throws FileNotFoundException, IOException {
 
         String userDirectory = Paths.get("").toAbsolutePath().toString();
-        this.inputFile = new FileInputStream(userDirectory + "\\test\\semTest.txt");
+        this.inputFile = new FileInputStream(userDirectory + "\\test\\contractTest.txt");
         BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(inputFile));
         ArrayList<String> words;
         while ((str = inputBuffer.readLine()) != null) {
