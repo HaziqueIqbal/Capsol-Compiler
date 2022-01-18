@@ -25,7 +25,7 @@ public class Semantic {
             throw new Exception("Contract Redeclaration Error -> " + name + " contract is already declared!");
         }
         oMainTableList.add(new MainTable(name, type, Parent, classTable));
-        System.out.println(name + " " + type + " " + Parent);
+//        System.out.println(name + " " + type + " " + Parent);
         response = true;
 
     }
@@ -41,7 +41,7 @@ public class Semantic {
         if (!response) {
             throw new Exception("Redeclaration Error -> " + name + " is already declared!");
         }
-        oMainTableList.add(new MainTable(name, type, classTable));
+//        oMainTableList.add(new MainTable(name, type, classTable));
         System.out.println(name + " " + type);
         response = true;
 
@@ -59,7 +59,7 @@ public class Semantic {
             throw new Exception("Function Redeclaration Error -> " + name + " function is already declared!");
         }
         oMainTableList.add(new MainTable(name, type, stateMutability, isFunction, oFunctionTable));
-        System.out.println(name + " " + type + " " + stateMutability);
+//        System.out.println(name + " " + type + " " + stateMutability);
         response = true;
     }
 
@@ -90,7 +90,7 @@ public class Semantic {
             throw new Exception("Redeclaration Error -> " + name + " is already declared!");
         }
         oMainTableList.add(new MainTable(name, type));
-        System.out.println(name + " " + type);
+//        System.out.println(name + " " + type);
         response = true;
     }
 
@@ -131,7 +131,17 @@ public class Semantic {
         }
         return oFunctionTable;
     }
-    
+
+    public FunctionTable LookUp_FunctionTable(ArrayList<FunctionTable> oFunctionList, String name) {
+        FunctionTable _oFunctionTable = null;
+        for (FunctionTable oFunctionTable : oFunctionList) {
+            if (oFunctionTable.getName().equals(name)) {
+                _oFunctionTable = oFunctionTable;
+            }
+        }
+        return _oFunctionTable;
+    }
+
 //    public ClassTable lookUp_ClassTable(StringBuilder type){
 //        ClassTable oClassTableList = new ClassTable();
 //          for (ClassTable item : oClassTableList) {
@@ -142,7 +152,6 @@ public class Semantic {
 //        }
 //        return false;
 //    }
-
     public boolean LookUp_ClassTable(ArrayList<ClassTable> oClassTableList, String name) {
         for (ClassTable oClassTable : oClassTableList) {
             if (oClassTable.getName().equals(name)) {
@@ -151,7 +160,7 @@ public class Semantic {
         }
         return false;
     }
-    
+
     public ClassTable Get_ClassTable(ArrayList<ClassTable> oClassTableList, String name) {
         ClassTable _oClassTable = null;
         for (ClassTable oClassTable : oClassTableList) {
@@ -200,10 +209,45 @@ public class Semantic {
     }
 
     public StringBuilder compatibilityCheck(StringBuilder leftType, StringBuilder rightType, String operator) {
-
-        if (operator.equals("+") || operator.equals("-") || operator.equals("*") || operator.equals("/") || operator.equals("%")) {
-            if (leftType.equals("SignedInteger") && rightType.equals("SignedInteger")) {
+        if (leftType.toString().equals("String-Keyword") && (rightType.toString().toString().equals("String-Keyword") || rightType.toString().toString().equals("String"))) {
+            if (operator.equals("+") || operator.equals("=")) {
+                StringBuilder type = new StringBuilder("String");
+                return type;
+            }
+        } else if (operator.equals("+") || operator.equals("-") || operator.equals("*") || operator.equals("/") || operator.equals("%") || operator.equals("=")) {
+            if (leftType.toString().equals("SignedInteger-Keyword") && (rightType.toString().equals("SignedInteger") || rightType.toString().equals("SignedInteger-Keyword"))) {
                 StringBuilder type = new StringBuilder("SignedInteger");
+                return type;
+            } else if (leftType.toString().equals("UnsignedInteger-Keyword") && (rightType.toString().equals("UnSignedInteger") || rightType.toString().equals("UnsignedInteger-Keyword"))) {
+                StringBuilder type = new StringBuilder("UnSignedInteger");
+                return type;
+            } else if (leftType.toString().equals("Character-Keyword") && (rightType.toString().equals("Character") || rightType.toString().equals("Character-Keyword"))) {
+                StringBuilder type = new StringBuilder("Character");
+                return type;
+            } else if (leftType.toString().equals("FloatingPointNumber-Keyword") && (rightType.toString().equals("SignedPoint") || rightType.toString().equals("FloatingPointNumber-Keyword"))) {
+                StringBuilder type = new StringBuilder("SignedPoint");
+                return type;
+            } else if (leftType.toString().equals("FloatingPointNumber-Keyword") && (rightType.toString().equals("UnsignedPoint") || rightType.toString().equals("FloatingPointNumber-Keyword"))) {
+                StringBuilder type = new StringBuilder("UnsignedPoint");
+                return type;
+            }
+        } else if (operator.equals("==")
+                || operator.equals("<=") || operator.equals(">=") || operator.equals("<")
+                || operator.equals(">")) {
+            if (leftType.toString().equals("SignedInteger-Keyword") && (rightType.toString().equals("SignedInteger") || rightType.toString().equals("SignedInteger-Keyword"))) {
+                StringBuilder type = new StringBuilder("boolean");
+                return type;
+            } else if (leftType.toString().equals("UnsignedInteger-Keyword") && (rightType.toString().equals("UnSignedInteger") || rightType.toString().equals("UnsignedInteger-Keyword"))) {
+                StringBuilder type = new StringBuilder("boolean");
+                return type;
+            } else if (leftType.toString().equals("Character-Keyword") && (rightType.toString().equals("Character") || rightType.toString().equals("Character-Keyword"))) {
+                StringBuilder type = new StringBuilder("boolean");
+                return type;
+            } else if (leftType.toString().equals("FloatingPointNumber-Keyword") && (rightType.toString().equals("SignedPoint") || rightType.toString().equals("FloatingPointNumber-Keyword"))) {
+                StringBuilder type = new StringBuilder("boolean");
+                return type;
+            } else if (leftType.toString().equals("FloatingPointNumber-Keyword") && (rightType.toString().equals("UnsignedPoint") || rightType.toString().equals("FloatingPointNumber-Keyword"))) {
+                StringBuilder type = new StringBuilder("boolean");
                 return type;
             }
         }
@@ -226,7 +270,7 @@ class MainTable {
     private StringBuilder Parent;
     private String stateMutability;
     private ArrayList<ClassTable> classTable;
-    private ArrayList<FunctionTable> oFunctionTable;
+    private static ArrayList<FunctionTable> oFunctionTable;
 
     public ArrayList<FunctionTable> getoFunctionTable() {
         return oFunctionTable;
@@ -293,8 +337,9 @@ class ClassTable {
     private String typeModifier;
     private ArrayList<ClassTable> oClassTableList;
     private ArrayList<FunctionTable> oFunctionTableList;
-    
-    public ClassTable(){}
+
+    public ClassTable() {
+    }
 
     public ClassTable(String name, String type, String Access_Modifier, String Type_Modifier) {
         this.name = name;

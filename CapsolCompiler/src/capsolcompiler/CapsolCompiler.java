@@ -16,5 +16,4 @@ public class CapsolCompiler {
         new Syntax();
         new Semantic();
     }
-
 }
