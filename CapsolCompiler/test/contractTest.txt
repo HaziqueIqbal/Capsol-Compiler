@@ -10,21 +10,22 @@ contract conc{
     alpha public alp = '4';
     int public a = +64; 
     conc s = new conc(x,abc);
-    function ssbb(uint storage a,uint[] b) public returns (uint){
+    function ssbb(uint a,uint b) public returns (int){
         a = this.b;
         string bc = this.abc; 
         while(!true){}
         do{}while(this.x < this.b);
         do{}while(!false);
-        if(x<b)
-        {}else if(x<b){}else{}
+        if(x<b){}else if(x<b){}else{}
         for(this.x = 5;;this.a.fn().ih[5]++){             
         }
     }
-    function ssbb(uint storage a,uint[] b) public returns (int){
+    function ssbb(uint a,uint b, int bb) public returns (int){
         a = this.b;
         string bc = this.abc;
-        while(x<b){}
+        int x = this.ssbb(this.x, this.b);
+        while(x<b){
+        }
     }
 }
 contract conc1 {}
