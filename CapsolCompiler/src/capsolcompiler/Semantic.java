@@ -200,7 +200,7 @@ public class Semantic {
                 return typeReturn;
             }
         } else if (operator.equals("!")) {
-            if (type.toString().equals("boolean")|| type.toString().equals("identifier")) {
+            if (type.toString().equals("boolean") || type.toString().equals("identifier")) {
                 typeReturn.append("boolean");
                 return typeReturn;
             }
@@ -209,44 +209,44 @@ public class Semantic {
     }
 
     public StringBuilder compatibilityCheck(StringBuilder leftType, StringBuilder rightType, String operator) {
-        if (leftType.toString().equals("String-Keyword") && (rightType.toString().equals("String-Keyword") || rightType.toString().equals("String"))) {
+        if ((leftType.toString().equals("String-Keyword") || leftType.toString().equals("String")) && (rightType.toString().equals("String-Keyword") || rightType.toString().equals("String"))) {
             if (operator.equals("+") || operator.equals("=")) {
                 StringBuilder type = new StringBuilder("String");
                 return type;
             }
         } else if (operator.equals("+") || operator.equals("-") || operator.equals("*") || operator.equals("/") || operator.equals("%") || operator.equals("=")) {
-            if (leftType.toString().equals("SignedInteger-Keyword") && (rightType.toString().equals("SignedInteger") || rightType.toString().equals("SignedInteger-Keyword"))) {
+            if ((leftType.toString().equals("SignedInteger") || leftType.toString().equals("SignedInteger-Keyword")) && (rightType.toString().equals("SignedInteger") || rightType.toString().equals("SignedInteger-Keyword"))) {
                 StringBuilder type = new StringBuilder("SignedInteger");
                 return type;
-            } else if (leftType.toString().equals("UnsignedInteger-Keyword") && (rightType.toString().equals("UnSignedInteger")||rightType.toString().equals("UnsignedInteger")  || rightType.toString().equals("UnsignedInteger-Keyword"))) {
+            } else if ((leftType.toString().equals("UnSignedInteger") || leftType.toString().equals("UnsignedInteger") || leftType.toString().equals("UnsignedInteger-Keyword")) && (rightType.toString().equals("UnSignedInteger") || rightType.toString().equals("UnsignedInteger") || rightType.toString().equals("UnsignedInteger-Keyword"))) {
                 StringBuilder type = new StringBuilder("UnSignedInteger");
                 return type;
-            } else if (leftType.toString().equals("Character-Keyword") && (rightType.toString().equals("Character") || rightType.toString().equals("Character-Keyword"))) {
+            } else if ((leftType.toString().equals("Character") || leftType.toString().equals("Character-Keyword")) && (rightType.toString().equals("Character") || rightType.toString().equals("Character-Keyword"))) {
                 StringBuilder type = new StringBuilder("Character");
                 return type;
-            } else if (leftType.toString().equals("FloatingPointNumber-Keyword") && (rightType.toString().equals("SignedPoint") || rightType.toString().equals("FloatingPointNumber-Keyword"))) {
+            } else if ((leftType.toString().equals("SignedPoint") || leftType.toString().equals("FloatingPointNumber-Keyword")) && (rightType.toString().equals("SignedPoint") || rightType.toString().equals("FloatingPointNumber-Keyword"))) {
                 StringBuilder type = new StringBuilder("SignedPoint");
                 return type;
-            } else if (leftType.toString().equals("FloatingPointNumber-Keyword") && (rightType.toString().equals("UnsignedPoint") || rightType.toString().equals("FloatingPointNumber-Keyword"))) {
+            } else if ((leftType.toString().equals("UnsignedPoint") || leftType.toString().equals("FloatingPointNumber-Keyword")) && (rightType.toString().equals("UnsignedPoint") || rightType.toString().equals("FloatingPointNumber-Keyword"))) {
                 StringBuilder type = new StringBuilder("UnsignedPoint");
                 return type;
             }
         } else if (operator.equals("==")
                 || operator.equals("<=") || operator.equals(">=") || operator.equals("<")
                 || operator.equals(">")) {
-            if (leftType.toString().equals("SignedInteger-Keyword") && (rightType.toString().equals("SignedInteger") || rightType.toString().equals("SignedInteger-Keyword"))) {
+            if ((leftType.toString().equals("SignedInteger") || leftType.toString().equals("SignedInteger-Keyword")) && (rightType.toString().equals("SignedInteger") || rightType.toString().equals("SignedInteger-Keyword"))) {
                 StringBuilder type = new StringBuilder("boolean");
                 return type;
-            } else if (leftType.toString().equals("UnsignedInteger-Keyword") && (rightType.toString().equals("UnSignedInteger") || rightType.toString().equals("UnsignedInteger-Keyword"))) {
+            } else if ((leftType.toString().equals("UnSignedInteger") || leftType.toString().equals("UnsignedInteger-Keyword")) && (rightType.toString().equals("UnSignedInteger") || rightType.toString().equals("UnsignedInteger-Keyword"))) {
                 StringBuilder type = new StringBuilder("boolean");
                 return type;
-            } else if (leftType.toString().equals("Character-Keyword") && (rightType.toString().equals("Character") || rightType.toString().equals("Character-Keyword"))) {
+            } else if ((leftType.toString().equals("Character") || leftType.toString().equals("Character-Keyword")) && (rightType.toString().equals("Character") || rightType.toString().equals("Character-Keyword"))) {
                 StringBuilder type = new StringBuilder("boolean");
                 return type;
-            } else if (leftType.toString().equals("FloatingPointNumber-Keyword") && (rightType.toString().equals("SignedPoint") || rightType.toString().equals("FloatingPointNumber-Keyword"))) {
+            } else if ((leftType.toString().equals("SignedPoint") || leftType.toString().equals("FloatingPointNumber-Keyword")) && (rightType.toString().equals("SignedPoint") || rightType.toString().equals("FloatingPointNumber-Keyword"))) {
                 StringBuilder type = new StringBuilder("boolean");
                 return type;
-            } else if (leftType.toString().equals("FloatingPointNumber-Keyword") && (rightType.toString().equals("UnsignedPoint") || rightType.toString().equals("FloatingPointNumber-Keyword"))) {
+            } else if ((leftType.toString().equals("UnsignedPoint") || leftType.toString().equals("FloatingPointNumber-Keyword")) && (rightType.toString().equals("UnsignedPoint") || rightType.toString().equals("FloatingPointNumber-Keyword"))) {
                 StringBuilder type = new StringBuilder("boolean");
                 return type;
             }
