@@ -489,7 +489,7 @@ public class Syntax {
                     index++;
                     StringBuilder getType = new StringBuilder("");
                     StringBuilder getOperator = new StringBuilder("");
-                    if (VDS_1(oClassTable, oFunctionTable,className, Parent, getType, getOperator)) {
+                    if (VDS_1(oClassTable, oFunctionTable, className, Parent, getType, getOperator)) {
                         if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
                             if ("=".equals(getOperator.toString())) {
                                 StringBuilder check = sm.compatibilityCheck(getTypeTop, getType, getOperator.toString());
@@ -503,6 +503,13 @@ public class Syntax {
                                 } else {
                                     System.out.println("Type Mismatch Error!");
                                     System.exit(0);
+                                }
+                            } else {
+                                FunctionTable f = new Semantic().LookUp_FunctionTable(oFunctionTable, name1);
+                                if (f == null) {
+                                    oFunctionTable.add(new FunctionTable(name1, getTypeTop.toString(), Semantic.scopeCount));
+                                } else {
+                                    System.out.println("Redeclaration Error!");
                                 }
                             }
                             index++;
@@ -637,7 +644,7 @@ public class Syntax {
                 }
             } else if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
                 index++;
-                if (ArgList(new StringBuilder(""),null, null, "", null)) {
+                if (ArgList(new StringBuilder(""), null, null, "", null)) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
                         index++;
                         if (F_Opt2_1()) {
@@ -647,7 +654,7 @@ public class Syntax {
                 }
             } else if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
                 index++;
-                if (OE(new StringBuilder(""), null, null,"", null)) { /////////////////////////////
+                if (OE(new StringBuilder(""), null, null, "", null)) { /////////////////////////////
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("]")) {
                         index++;
                         if (A_Opt_1()) {
@@ -658,7 +665,7 @@ public class Syntax {
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("equal")
                     || Validator.token.get(index).classPart.toLowerCase().equals("assignment")) {
                 if (Operator(new StringBuilder(""))) {
-                    if (OE(new StringBuilder(""), null,null,"", null)) { /////////////////////////////
+                    if (OE(new StringBuilder(""), null, null, "", null)) { /////////////////////////////
                         return true;
                     }
                 }
@@ -688,7 +695,7 @@ public class Syntax {
                 }
             } else if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
                 index++;
-                if (ArgList(new StringBuilder(""), oClassTable,oFunctionTable, "", null)) {
+                if (ArgList(new StringBuilder(""), oClassTable, oFunctionTable, "", null)) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
                         index++;
                         if (F_Opt2()) {
@@ -698,7 +705,7 @@ public class Syntax {
                 }
             } else if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
                 index++;
-                if (OE(new StringBuilder(""), oClassTable,oFunctionTable, "", null)) {/////////////////////
+                if (OE(new StringBuilder(""), oClassTable, oFunctionTable, "", null)) {/////////////////////
                     if (Validator.token.get(index).valuePart.toLowerCase().equals("]")) {
                         index++;
                         if (A_Opt()) {
@@ -711,12 +718,12 @@ public class Syntax {
                 StringBuilder getOperator = new StringBuilder("");
                 if (Operator(getOperator)) {
                     StringBuilder getType = new StringBuilder("");
-                    if (OE(getType, oClassTable,oFunctionTable, "", null)) {
+                    if (OE(getType, oClassTable, oFunctionTable, "", null)) {
                         if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
                             if (lookUp != null) {
                                 String[] temp = lookUp.getType().split("\\(");
                                 StringBuilder store = new StringBuilder(temp[0]);
-                                StringBuilder getFinalType = sm.compatibilityCheck(store, getType, getOperator.toString());
+                                StringBuilder getFinalType = sm.compatibilityCheck(getType, store, getOperator.toString());
                                 if (getFinalType == null) {
                                     System.out.println("Type Mismatch Error!");
                                     System.exit(0);
@@ -757,7 +764,7 @@ public class Syntax {
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("equal")
                     || Validator.token.get(index).classPart.toLowerCase().equals("assignment")) {
                 if (Operator(new StringBuilder(""))) {
-                    if (OE(new StringBuilder(""), null,null, "", null)) {///////////////
+                    if (OE(new StringBuilder(""), null, null, "", null)) {///////////////
                         return true;
                     }
                 }
@@ -785,7 +792,7 @@ public class Syntax {
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("equal")
                     || Validator.token.get(index).classPart.toLowerCase().equals("assignment")) {
                 if (Operator(new StringBuilder(""))) {
-                    if (OE(new StringBuilder(""), null,null, "", null)) {////////////////////
+                    if (OE(new StringBuilder(""), null, null, "", null)) {////////////////////
                         if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
                             index++;
                             return true;
@@ -883,7 +890,7 @@ public class Syntax {
                                     index++;
                                     if (Validator.token.get(index).valuePart.equals("(")) {
                                         index++;
-                                        if (ArgList(new StringBuilder(""), null, null,"", null)) {
+                                        if (ArgList(new StringBuilder(""), null, null, "", null)) {
                                             if (Validator.token.get(index).valuePart.equals(")")) {
                                                 index++;
                                                 if (Validator.token.get(index).valuePart.equals(";")) {
@@ -944,7 +951,7 @@ public class Syntax {
                         if (Validator.token.get(index).valuePart.equals("(")) {
                             index++;
                             StringBuilder PLtypes = new StringBuilder();
-                            if (ArgList(PLtypes, oTable, null,itemName, Parent)) {
+                            if (ArgList(PLtypes, oTable, null, itemName, Parent)) {
                                 if (Validator.token.get(index).valuePart.equals(")")) {
                                     if (sm.LookUp_ClassTable(oTable, itemName)) {
                                         ClassTable check = sm.Get_ClassTable(oTable, itemName);
@@ -2098,6 +2105,7 @@ public class Syntax {
                                     oTable.add(new ClassTable(dataTypeName, dataType, modifier.toString(), "-"));
                                 } else {
                                     System.out.println(dataTypeName + " is already decleared!");
+                                    System.exit(0);
                                 }
                             }
                         } else {
@@ -2105,6 +2113,7 @@ public class Syntax {
                                 oTable.add(new ClassTable(dataTypeName, dataType, modifier.toString(), "-"));
                             } else {
                                 System.out.println(dataTypeName + " is already decleared!");
+                                System.exit(0);
                             }
                         }
                         index++;
@@ -2532,7 +2541,7 @@ public class Syntax {
             } else if (ThisOrSuper(thisOrSuperType)) {
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-                        if (thisOrSuperType.toString().toLowerCase().equals("this") || thisOrSuperType.toString().toLowerCase().equals("identifier")) {
+                        if ((thisOrSuperType.toString().toLowerCase().equals("this"))) {
                             if (oTable != null) {
                                 ClassTable oClassTable = new Semantic().Get_ClassTable(oTable, Validator.token.get(index).valuePart);
                                 passName = Validator.token.get(index).valuePart;
@@ -2543,14 +2552,49 @@ public class Syntax {
                                     type.append(oClassTable.getType());
                                     passName = Validator.token.get(index).valuePart;
                                 }
-                            } else {
-                                FunctionTable check = sm.LookUp_FunctionTable(Validator.token.get(index).valuePart);
-                                if (check.getType() == null) {
-                                    System.out.println(Validator.token.get(index).valuePart + " is not defined!");
-                                    System.exit(0);
+                            }
+                        } else if (thisOrSuperType.toString().toLowerCase().equals("identifier")) {
+                            if (oFunctionTable != null) {
+                                FunctionTable check = sm.LookUp_FunctionTable(oFunctionTable, Validator.token.get(index).valuePart);
+                                if (check != null) {
+                                    if (check.getType() == null) {
+                                        ClassTable oClassTable = new Semantic().Get_ClassTable(oTable, Validator.token.get(index).valuePart);
+                                        passName = Validator.token.get(index).valuePart;
+                                        if (oClassTable == null) {
+                                            System.out.println(Validator.token.get(index).valuePart + " is not defined!");
+                                            System.exit(0);
+                                        } else {
+                                            type.append(oClassTable.getType());
+                                            passName = Validator.token.get(index).valuePart;
+                                        }
+                                    } else {
+                                        type.append(check.getType());
+                                        passName = Validator.token.get(index).valuePart;
+                                    }
                                 } else {
+                                    if (oTable != null) {
+                                        ClassTable oClassTable = new Semantic().Get_ClassTable(oTable, Validator.token.get(index).valuePart);
+                                        passName = Validator.token.get(index).valuePart;
+                                        if (oClassTable == null) {
+                                            System.out.println(Validator.token.get(index).valuePart + " is not defined!");
+                                            System.exit(0);
+                                        } else {
+                                            type.append(oClassTable.getType());
+                                            passName = Validator.token.get(index).valuePart;
+                                        }
+                                    }
+                                }
+                            } else {
+                                if (oTable != null) {
+                                    ClassTable oClassTable = new Semantic().Get_ClassTable(oTable, Validator.token.get(index).valuePart);
                                     passName = Validator.token.get(index).valuePart;
-                                    type.append(check.getType());
+                                    if (oClassTable == null) {
+                                        System.out.println(Validator.token.get(index).valuePart + " is not defined!");
+                                        System.exit(0);
+                                    } else {
+                                        type.append(oClassTable.getType());
+                                        passName = Validator.token.get(index).valuePart;
+                                    }
                                 }
                             }
                         } else if (thisOrSuperType.toString().toLowerCase().equals("super")) {
@@ -3572,7 +3616,7 @@ public class Syntax {
                 || Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")) {
             if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
                 index++;
-                if (OE(new StringBuilder(""), null,null, "", null)) {
+                if (OE(new StringBuilder(""), null, null, "", null)) {
                     if (OE_1()) {
                         if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
                             index++;
@@ -3583,7 +3627,7 @@ public class Syntax {
                         }
                     }
                 }
-            } else if (OE(new StringBuilder(""), null,null, "", null)) {
+            } else if (OE(new StringBuilder(""), null, null, "", null)) {
                 if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {
                     index++;
                     return true;
@@ -3596,7 +3640,7 @@ public class Syntax {
     boolean OE_1() {
         if (Validator.token.get(index).classPart.toLowerCase().equals("comma")) {
             index++;
-            if (OE(new StringBuilder(""),null, null, "", null)) {
+            if (OE(new StringBuilder(""), null, null, "", null)) {
                 if (OE_1()) {
                     return true;
                 }
@@ -3612,7 +3656,7 @@ public class Syntax {
     boolean Er_Statement() {
         if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
             index++;
-            if (OE(new StringBuilder(""), null,null, "", null)) {
+            if (OE(new StringBuilder(""), null, null, "", null)) {
                 if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
                     index++;
                     if (Validator.token.get(index).classPart.toLowerCase().equals("semi-colon")) {

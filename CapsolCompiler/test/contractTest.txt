@@ -1,6 +1,11 @@
 capsol version 0.1;
+
 contract conc{
     constructor(uint id, string name) public{}
+    int a = +2;
+    int b = a;
+    int c = a + b;
+    string d = "d";
     string public abc = "d";
     uint public  x = 5;
     uint public b = x * 3;
@@ -11,13 +16,18 @@ contract conc{
     int public a = +64; 
     conc s = new conc(x,abc);
     function ssbb(uint a,uint b) public returns (int){
+        int cb;
         a = this.b;
+        string abc = "";
         string bc = this.abc; 
+        uint bx =5;
+        b = bx;
+        cb = this.a;
         while(!true){}
         do{}while(this.x < this.b);
         do{}while(!false);
         if(x<b){}else if(x<b){}else{}
-        for(this.x = 5;;this.a.fn().ih[5]++){             
+        for(a = +5;;this.a.fn().ih[5]++){              
         }
     }
     function ssbb(uint a,uint b, int bb) public returns (int){
