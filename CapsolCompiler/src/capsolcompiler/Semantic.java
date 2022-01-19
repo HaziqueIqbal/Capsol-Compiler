@@ -209,7 +209,7 @@ public class Semantic {
     }
 
     public StringBuilder compatibilityCheck(StringBuilder leftType, StringBuilder rightType, String operator) {
-        if (leftType.toString().equals("String-Keyword") && (rightType.toString().toString().equals("String-Keyword") || rightType.toString().toString().equals("String"))) {
+        if (leftType.toString().equals("String-Keyword") && (rightType.toString().equals("String-Keyword") || rightType.toString().equals("String"))) {
             if (operator.equals("+") || operator.equals("=")) {
                 StringBuilder type = new StringBuilder("String");
                 return type;
