@@ -19,6 +19,7 @@ public class Syntax {
     String Acc_Mod = "";
     MainTable parentChecking;
     static boolean flagSuper;
+    ArrayList<ClassTable> parentOTable;
 
     static boolean check_for_function = false;
 
@@ -167,7 +168,7 @@ public class Syntax {
         if (Validator.token.get(index).classPart.toLowerCase().equals("class-keyword")) {
             index++;
             if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-                name = Validator.token.get(index).valuePart.toLowerCase();
+                name = Validator.token.get(index).valuePart;
                 index++;
                 StringBuilder Parent = new StringBuilder("");
                 if (inheritance(Parent)) {
@@ -627,31 +628,126 @@ public class Syntax {
         return false;
     }
 
-    boolean FOR_X() {
+    boolean FOR_X(StringBuilder type, ArrayList<ClassTable> oTable, ArrayList<FunctionTable> oFunctionTable, String className, StringBuilder Parent, String passName) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("dot")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("(")
                 || Validator.token.get(index).classPart.toLowerCase().equals("equal")
                 || Validator.token.get(index).classPart.toLowerCase().equals("assignment")
                 || Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
+//             type = new StringBuilder("");
             if (Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
                 index++;
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                    passName = Validator.token.get(index).valuePart;
+                    if (sm.LookUp_ClassTable(oTable, passName)) {
+                        ClassTable objectReturn = sm.Get_ClassTable(oTable, passName);
+                        if (objectReturn != null) {
+                            MainTable oMainTable = sm.LookUp_MainTable(objectReturn.getType());
+                            if (oMainTable.getName() != null) {
+                                oTable = oMainTable.getClassTable();
+                                oFunctionTable = oMainTable.getoFunctionTable();
+//                                className = oMainTable.getName();
+                                Parent = oMainTable.getParent();
+                                type.delete(0, type.length());
+                                type.append(oMainTable.getName());
+                            } else {
+                                ClassTable lookUp = sm.Get_ClassTable(oTable, passName);
+                                if (lookUp != null) {
+                                } else {
+
+                                    System.out.println(passName + " return type is not an object!");
+                                    System.exit(0);
+                                }
+                            }
+                        }
+                    } else {
+                        System.out.println(passName + " is undeclared!");
+                        System.exit(0);
+                    }
+
                     index++;
-                    if (FOR_X()) {
+
+                    if (FOR_X(type, oTable, oFunctionTable, className, Parent, passName)) {
                         return true;
                     }
                 }
             } else if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
                 index++;
-                if (ArgList(new StringBuilder(""), null, null, "", null)) {
+                StringBuilder PLtypes = new StringBuilder("");
+                ArrayList<ClassTable> temp = oTable;
+                oTable = parentOTable;
+                if (ArgList(PLtypes, oTable, oFunctionTable, className, Parent)) {
                     if (Validator.token.get(index).valuePart.toLowerCase().equals(")")) {
                         index++;
-                        if (F_Opt2_1()) {
+                        oTable = temp;
+                        if (oTable != null) {
+                            if (sm.LookUp_ClassTable(oTable, passName)) {
+                                ClassTable objectReturn = sm.Get_ClassTable(oTable, passName);
+                                if (objectReturn != null) {
+                                    MainTable oMainTable = sm.LookUp_MainTable(objectReturn.getType());
+                                    if (oMainTable.getName() != null) {
+                                        oTable = oMainTable.getClassTable();
+                                        oFunctionTable = oMainTable.getoFunctionTable();
+//                                        className = oMainTable.getName();
+                                        Parent = oMainTable.getParent();
+                                        type.delete(0, type.length());
+                                        type.append(oMainTable.getName());
+                                    } else {
+                                        ClassTable lookUp = sm.Get_ClassTable(oTable, passName);
+                                        if (lookUp != null) {
+                                        } else {
+                                            System.out.println(passName + " return type is not an object!");
+                                            System.exit(0);
+                                        }
+                                    }
+                                }
+                            } else {
+                                System.out.println(passName + " is undeclared!");
+                                System.exit(0);
+                            }
+                        }
+                        if (sm.LookUp_ClassTable(oTable, passName)) {
+                            ClassTable check = sm.Get_ClassTable(oTable, passName);
+                            String[] upperPL = check.getType().split("->");
+                            if (upperPL.length != 0) {
+                                String[] upperPL_2 = upperPL[0].split(",");
+                                String[] lowerPL = PLtypes.toString().split(",");
+                                int flag = 0;
+                                if (lowerPL.length == upperPL_2.length) {
+                                    for (int i = 0; i < upperPL_2.length; i++) {
+                                        StringBuilder x = new StringBuilder(upperPL_2[i]);
+                                        StringBuilder y = new StringBuilder(lowerPL[i]);
+                                        StringBuilder check1 = sm.compatibilityCheck(y, x, "=");
+                                        if (check1 == null) {
+                                            flag++;
+                                        }
+                                    }
+                                    if (flag > 0) {
+                                        System.out.println("Arguments must be same in type");
+                                        System.exit(0);
+                                    }
+                                } else {
+                                    System.out.println("Arguments must be same in number");
+                                    System.exit(0);
+                                }
+//                            System.out.println(upperPL[1]);
+                                type.delete(0, type.length());
+                                String[] typeSplit = upperPL[0].split(",");
+                                if (typeSplit.length > 1) {
+                                    System.out.println("Error : More than Two return types in function!");
+                                    System.exit(0);
+                                } else {
+                                    type.append(upperPL[0]);
+                                }
+                            }
+                        }
+                        if (F_Opt2_1(type, oTable, oFunctionTable, className, Parent, passName)) {
                             return true;
                         }
                     }
                 }
+                //future
             } else if (Validator.token.get(index).valuePart.toLowerCase().equals("[")) {
                 index++;
                 if (OE(new StringBuilder(""), null, null, "", null)) { /////////////////////////////
@@ -664,12 +760,16 @@ public class Syntax {
                 }
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("equal")
                     || Validator.token.get(index).classPart.toLowerCase().equals("assignment")) {
-                if (Operator(new StringBuilder(""))) {
-                    if (OE(new StringBuilder(""), null, null, "", null)) { /////////////////////////////
+                StringBuilder getOperator = new StringBuilder("");
+                if (Operator(getOperator)) {
+                    StringBuilder getAssignmentType = new StringBuilder("");
+                    if (OE(getAssignmentType, oTable, oFunctionTable, className, Parent)) { /////////////////////////////
                         return true;
                     }
                 }
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
+                String inc_dec = Validator.token.get(index).valuePart;
+                StringBuilder finalType = sm.compatibilityCheckForUnaray(type, inc_dec);
                 index++;
                 return true;
             }
@@ -757,7 +857,7 @@ public class Syntax {
                 index++;
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                     index++;
-                    if (FOR_X()) {
+                    if (FOR_X(new StringBuilder(""), null, null, "", null, "")) {
                         return true;
                     }
                 }
@@ -810,13 +910,13 @@ public class Syntax {
         return false;
     }
 
-    boolean F_Opt2_1() {
+    boolean F_Opt2_1(StringBuilder type, ArrayList<ClassTable> oTable, ArrayList<FunctionTable> oFunctionTable, String className, StringBuilder Parent, String passName) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
             if (Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
                 index++;
                 if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                     index++;
-                    if (FOR_X()) {
+                    if (FOR_X(type, oTable, oFunctionTable, className, Parent, passName)) {
                         return true;
                     }
                 }
@@ -931,7 +1031,7 @@ public class Syntax {
                     System.exit(0);
                 } else {
                     try {
-                        oTable.add(new ClassTable(idName, itemName, "-", "-"));
+                        oTable.add(new ClassTable(idName, tab.getName(), "-", "-"));
                     } catch (Exception ex) {
                         Logger.getLogger(Syntax.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -943,7 +1043,8 @@ public class Syntax {
                 if (Validator.token.get(index).valuePart.equals("new")) {
                     index++;
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-                        if (!Validator.token.get(index).valuePart.equals(itemName)) {
+                        MainTable check2 = sm.LookUp_MainTable(Validator.token.get(index).valuePart);
+                        if (check2.getName() == null) {
                             System.out.println("Contract Name Error!");
                             System.exit(0);
                         }
@@ -985,7 +1086,8 @@ public class Syntax {
                                             System.exit(0);
                                         } else {
                                             try {
-                                                oTable.add(new ClassTable(idName, itemName, "-", "-"));
+                                                oTable.add(new ClassTable(idName, tab.getName(), "-", "-"));
+                                                System.out.println(tab.getName());
                                             } catch (Exception ex) {
                                                 Logger.getLogger(Syntax.class.getName()).log(Level.SEVERE, null, ex);
                                             }
@@ -3205,6 +3307,7 @@ public class Syntax {
     }
 
     boolean For(ArrayList<ClassTable> oClassTable, ArrayList<FunctionTable> oFunctionTable, String className, StringBuilder Parent) {
+        parentOTable = oClassTable;
         if (Validator.token.get(index).valuePart.toLowerCase().equals("for")) {
             index++;
             if (Validator.token.get(index).valuePart.toLowerCase().equals("(")) {
@@ -3270,23 +3373,130 @@ public class Syntax {
         return false;
     }
 
-    boolean C3(ArrayList<ClassTable> oClassTable, ArrayList<FunctionTable> oFunctionTable, String className, StringBuilder Parent) {
+    boolean C3(ArrayList<ClassTable> oTable, ArrayList<FunctionTable> oFunctionTable, String className, StringBuilder Parent) {
         if (Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")
                 || Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")
                 || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+            StringBuilder type1 = new StringBuilder("");
             if (Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")
                     || Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
-                if (ThisOrSuper(new StringBuilder(""))) {
+                String passName = "";
+                StringBuilder thisOrSuperType = new StringBuilder("");
+                if (ThisOrSuper(thisOrSuperType)) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
+                        if ((thisOrSuperType.toString().toLowerCase().equals("this"))) {
+                            if (oTable != null) {
+                                ClassTable oClassTable = new Semantic().Get_ClassTable(oTable, Validator.token.get(index).valuePart);
+                                passName = Validator.token.get(index).valuePart;
+                                if (oClassTable == null) {
+                                    System.out.println(Validator.token.get(index).valuePart + " is not defined!");
+                                    System.exit(0);
+                                } else {
+                                    if (sm.isDataType(oClassTable.getType())) {
+                                        type1.append(oClassTable.getType());
+                                    } else {
+                                        MainTable oMainTable = sm.LookUp_MainTable(oClassTable.getType());
+                                        if (oMainTable.getName() != null) {
+                                            oTable = oMainTable.getClassTable();
+                                            oFunctionTable = oMainTable.getoFunctionTable();
+//                                            className = oMainTable.getName();
+                                            type1.append(oMainTable.getName());
+                                        }
+                                    }
+
+                                    passName = Validator.token.get(index).valuePart;
+                                }
+                            }
+                        } else if (thisOrSuperType.toString().toLowerCase().equals("identifier")) {
+                            if (oFunctionTable != null) {
+                                FunctionTable check = sm.LookUp_FunctionTable(oFunctionTable, Validator.token.get(index).valuePart);
+                                if (check != null) {
+                                    if (check.getType() == null) {
+                                        ClassTable oClassTable = new Semantic().Get_ClassTable(oTable, Validator.token.get(index).valuePart);
+                                        passName = Validator.token.get(index).valuePart;
+                                        if (oClassTable == null) {
+                                            System.out.println(Validator.token.get(index).valuePart + " is not defined!");
+                                            System.exit(0);
+                                        } else {
+                                            type1.append(oClassTable.getType());
+                                            passName = Validator.token.get(index).valuePart;
+                                        }
+                                    } else {
+                                        type1.append(check.getType());
+                                        passName = Validator.token.get(index).valuePart;
+                                    }
+                                } else {
+                                    if (oTable != null) {
+                                        ClassTable oClassTable = new Semantic().Get_ClassTable(oTable, Validator.token.get(index).valuePart);
+                                        passName = Validator.token.get(index).valuePart;
+                                        if (oClassTable == null) {
+                                            System.out.println(Validator.token.get(index).valuePart + " is not defined!");
+                                            System.exit(0);
+                                        } else {
+                                            type1.append(oClassTable.getType());
+                                            passName = Validator.token.get(index).valuePart;
+                                        }
+                                    }
+                                }
+                            } else {
+                                if (oTable != null) {
+                                    ClassTable oClassTable = new Semantic().Get_ClassTable(oTable, Validator.token.get(index).valuePart);
+                                    passName = Validator.token.get(index).valuePart;
+                                    if (oClassTable == null) {
+                                        System.out.println(Validator.token.get(index).valuePart + " is not defined!");
+                                        System.exit(0);
+                                    } else {
+                                        type1.append(oClassTable.getType());
+                                        passName = Validator.token.get(index).valuePart;
+                                    }
+                                }
+                            }
+                        } else if (thisOrSuperType.toString().toLowerCase().equals("super")) {
+                            flagSuper = false;
+                            if (!"-".equals(Parent.toString())) {
+                                String[] parms = Parent.toString().split(",");
+                                for (int i = 0; i < parms.length; i++) {
+                                    MainTable oMainTable = new Semantic().LookUp_MainTable(parms[i]);
+                                    if (oMainTable != null) {
+                                        if (oMainTable.getName() != null) {
+                                            oMainTable.getClassTable().forEach((cn) -> {
+//                                        System.out.println("Inside " + Validator.token.get(index).valuePart + " " + cn.getName());
+                                                if (Validator.token.get(index).valuePart.equals(cn.getName()) && !flagSuper) {
+                                                    if (cn.getAccess_Modifier().equals("public")) {
+                                                        type1.append(cn.getType());
+                                                        flagSuper = true;
+                                                    } else {
+                                                        System.out.println("Identifier may be private!");
+                                                        System.exit(0);
+                                                    }
+                                                }
+                                            });
+                                        } else {
+                                            System.out.println(parms[i] + " contract is not declared!");
+                                            System.exit(0);
+                                        }
+                                    } else {
+                                        System.out.println(Validator.token.get(index).valuePart + " not found!");
+                                        System.exit(0);
+                                    }
+                                }
+                                if (!flagSuper) {
+                                    System.out.println(Validator.token.get(index).valuePart + " not found in super class!");
+                                    System.exit(0);
+                                }
+                                flagSuper = false;
+                            }
+                        }
                         index++;
-                        if (FOR_X()) {
+                        if (FOR_X(type1, oTable, oFunctionTable, className, Parent, passName)) {
                             return true;
                         }
                     }
                 }
             } else if (Validator.token.get(index).classPart.toLowerCase().equals("increment/decrement")) {
                 index++;
-                if (ThisOrSuper(new StringBuilder(""))) {
+                StringBuilder thisOrSuperType = new StringBuilder("");
+                if (ThisOrSuper(thisOrSuperType)) {
                     if (Validator.token.get(index).classPart.toLowerCase().equals("identifier")) {
                         index++;
                         if (Ref(null, null, "", null, "", null)) { ////////////////
@@ -3495,10 +3705,8 @@ public class Syntax {
         if (Validator.token.get(index).classPart.toLowerCase().equals("thisorsuper-keyword")) {
             type.append(Validator.token.get(index).valuePart);
             index++;
-
             if (Validator.token.get(index).classPart.toLowerCase().equals("dot")) {
                 index++;
-
                 return true;
             }
         } else {

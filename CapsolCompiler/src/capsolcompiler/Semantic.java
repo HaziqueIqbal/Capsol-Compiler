@@ -183,10 +183,7 @@ public class Semantic {
     public StringBuilder compatibilityCheckForUnaray(StringBuilder type, String operator) {
         StringBuilder typeReturn = new StringBuilder("");
         if (operator.equals("++") || operator.equals("--")) {
-            if (type.toString().equals("Character")) {
-                typeReturn.append("Character");
-                return typeReturn;
-            } else if (type.toString().equals("SignedPoint")) {
+            if (type.toString().equals("SignedPoint")) {
                 typeReturn.append("SignedPoint");
                 return typeReturn;
             } else if (type.toString().equals("UnsignedPoint")) {
@@ -252,6 +249,22 @@ public class Semantic {
             }
         }
         return null;
+    }
+
+    public boolean isDataType(String type) {
+        return type.toLowerCase().equals("address-keyword")
+                || type.toLowerCase().equals("string-keyword")
+                || type.toLowerCase().equals("unsignedinteger-keyword")
+                || type.toLowerCase().equals("signedinteger-keyword")
+                || type.toLowerCase().equals("character-keyword")
+                || type.toLowerCase().equals("floatingpointnumber-keyword")
+                || type.toLowerCase().equals("address")
+                || type.toLowerCase().equals("character")
+                || type.toLowerCase().equals("signedpoint")
+                || type.toLowerCase().equals("unsignedpoint")
+                || type.toLowerCase().equals("signedinteger")
+                || type.toLowerCase().equals("unsignedinteger")
+                || type.toLowerCase().equals("string");
     }
 
     public void createScope() {
