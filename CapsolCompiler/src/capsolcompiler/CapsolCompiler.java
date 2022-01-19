@@ -15,6 +15,5 @@ public class CapsolCompiler {
         new Validator();
         new Syntax();
         new Semantic();
-        System.out.println("hi");
     }
 }
