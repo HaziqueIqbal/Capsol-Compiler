@@ -2,10 +2,10 @@ capsol version 0.1;
 
 contract conc{
     constructor(uint id, string name) public{}
-    int a = +2;
-    int b = a;
-    int c = a + b;
-    string d = "d";
+    $$int a = +2;
+    $$int b = a;
+    $$int c = a + b;
+    $$string d = "d";
     string public abc = "d";
     uint public  x = 5;
     uint public b = x * 3;
@@ -27,7 +27,8 @@ contract conc{
         do{}while(this.x < this.b);
         do{}while(!false);
         if(x<b){}else if(x<b){}else{}
-        for(a = +5;;this.a.fn().ih[5]++){              
+        for(a = +5;;this.a.fn().ih[5]++){
+            
         }
     }
     function ssbb(uint a,uint b, int bb) public returns (int){
@@ -43,7 +44,7 @@ abstract contract conc2 is conc, conc1{
     function ssbb(uint storage a,uint[] b) public returns (uint){
         uint bd = super.x;
         string x = super.abc; 
-        for(super.x = 5;;this.a.fn().ih[5]++){             
+        for(;;){             
         }     
     }
 }
