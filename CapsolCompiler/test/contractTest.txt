@@ -14,7 +14,6 @@ contract conc{
     point public point1 = point2;
     alpha public alp = '4';
     int public a = +64; 
-    conc s = new conc(x,abc);
     function ssbb(uint a,uint b) public returns (int){
         int cb;
         a = this.b;
@@ -26,20 +25,22 @@ contract conc{
         while(!true){}
         do{}while(this.x < this.b);
         do{}while(!false);
-        if(x<b){}else if(x<b){}else{}
-        for(a = +5;;this.a.fn().ih[5]++){
-            
-        }
+        if(a<b){}else if(a<b){}else{}         
     }
     function ssbb(uint a,uint b, int bb) public returns (int){
         a = this.b;
         string bc = this.abc;
         int x = this.ssbb(this.x, this.b);
-        while(x<b){
+        while(a<b){
         }
     }
 }
-contract conc1 {}
+ 
+contract conc1 {
+    uint x = 4; 
+    string abc = "d";
+    conc s = new conc(x,abc);
+}
 abstract contract conc2 is conc, conc1{
     function ssbb(uint storage a,uint[] b) public returns (uint){
         uint bd = super.x;
@@ -55,3 +56,22 @@ interface u1 {
 
 interface u2 {}
 interface conc3 is u1, u2{}
+
+
+contract D{
+    uint x = 3;
+    function bxc(int a){}
+}
+contract C {uint cx = 0;
+    D bb = new D();
+}
+contract B{C d = new C();}
+contract A{
+    
+    B a = new B();
+    int ag = +4;
+    function ssb(int a){
+        for(;;this.a.d.bb.bxc(this.ag).v++);
+    }
+    
+}
