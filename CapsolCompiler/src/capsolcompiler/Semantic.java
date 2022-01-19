@@ -183,24 +183,24 @@ public class Semantic {
     public StringBuilder compatibilityCheckForUnaray(StringBuilder type, String operator) {
         StringBuilder typeReturn = new StringBuilder("");
         if (operator.equals("++") || operator.equals("--")) {
-            if (type.equals("Character")) {
+            if (type.toString().equals("Character")) {
                 typeReturn.append("Character");
                 return typeReturn;
-            } else if (type.equals("SignedPoint")) {
+            } else if (type.toString().equals("SignedPoint")) {
                 typeReturn.append("SignedPoint");
                 return typeReturn;
-            } else if (type.equals("UnsignedPoint")) {
+            } else if (type.toString().equals("UnsignedPoint")) {
                 typeReturn.append("UnsignedPoint");
                 return typeReturn;
-            } else if (type.equals("UnSignedInteger")) {
+            } else if (type.toString().equals("UnSignedInteger")) {
                 typeReturn.append("UnSignedInteger");
                 return typeReturn;
-            } else if (type.equals("SignedInteger")) {
+            } else if (type.toString().equals("SignedInteger")) {
                 typeReturn.append("SignedInteger");
                 return typeReturn;
             }
         } else if (operator.equals("!")) {
-            if (type.equals("true") || type.equals("false")) {
+            if (type.toString().equals("boolean")|| type.toString().equals("identifier")) {
                 typeReturn.append("boolean");
                 return typeReturn;
             }
@@ -218,7 +218,7 @@ public class Semantic {
             if (leftType.toString().equals("SignedInteger-Keyword") && (rightType.toString().equals("SignedInteger") || rightType.toString().equals("SignedInteger-Keyword"))) {
                 StringBuilder type = new StringBuilder("SignedInteger");
                 return type;
-            } else if (leftType.toString().equals("UnsignedInteger-Keyword") && (rightType.toString().equals("UnSignedInteger") || rightType.toString().equals("UnsignedInteger-Keyword"))) {
+            } else if (leftType.toString().equals("UnsignedInteger-Keyword") && (rightType.toString().equals("UnSignedInteger")||rightType.toString().equals("UnsignedInteger")  || rightType.toString().equals("UnsignedInteger-Keyword"))) {
                 StringBuilder type = new StringBuilder("UnSignedInteger");
                 return type;
             } else if (leftType.toString().equals("Character-Keyword") && (rightType.toString().equals("Character") || rightType.toString().equals("Character-Keyword"))) {
