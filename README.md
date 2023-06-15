@@ -128,3 +128,4 @@ uint, int, alpha,	string,	address, struct,	point,	enum
 -	Event -> event
 -	Emit -> emit
 -	Indexed -> indexed
+
